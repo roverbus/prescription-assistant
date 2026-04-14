@@ -1,0 +1,4606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prescription Assistant — Clinician Companion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --slate-950: #0f172a;
+  --slate-900: #1e293b;
+  --slate-800: #334155;
+  --slate-700: #475569;
+  --slate-600: #64748b;
+  --slate-500: #94a3b8;
+  --slate-400: #cbd5e1;
+  --slate-300: #e2e8f0;
+  --slate-200: #f1f5f9;
+  --slate-50: #f8fafc;
+  --slate-100: #f8fafc;
+  --white: #ffffff;
+
+  --green-50: #f0fdf4;
+  --green-100: #dcfce7;
+  --green-500: #22c55e;
+  --green-600: #16a34a;
+  --green-700: #15803d;
+  --green-800: #166534;
+
+  --amber-50: #fffbeb;
+  --amber-100: #fef3c7;
+  --amber-400: #fbbf24;
+  --amber-500: #f59e0b;
+  --amber-600: #d97706;
+  --amber-700: #b45309;
+  --amber-800: #92400e;
+
+  --red-50: #fef2f2;
+  --red-100: #fee2e2;
+  --red-200: #fecaca;
+  --red-500: #ef4444;
+  --red-600: #dc2626;
+  --red-700: #b91c1c;
+
+  --blue-50: #eff6ff;
+  --blue-100: #dbeafe;
+  --blue-200: #bfdbfe;
+  --blue-400: #60a5fa;
+  --blue-500: #3b82f6;
+  --blue-600: #2563eb;
+  --blue-700: #1d4ed8;
+
+  --purple-50: #faf5ff;
+  --purple-500: #a855f7;
+
+  --panel-width: 420px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+  --shadow-xl: 0 20px 50px rgba(0,0,0,0.15);
+
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-heading: 'Outfit', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--slate-200);
+  color: var(--slate-900);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 24px;
+}
+
+.page-wrapper {
+  display: flex;
+  gap: 24px;
+  max-width: 1400px;
+  width: 100%;
+  align-items: flex-start;
+}
+
+.ehr-mock {
+  flex: 1;
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  min-height: 92vh;
+  padding: 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.ehr-mock::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--slate-400), var(--slate-300));
+}
+
+.ehr-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--slate-300);
+  margin-bottom: 24px;
+}
+
+.ehr-logo {
+  width: 36px;
+  height: 36px;
+  background: var(--slate-300);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--slate-600);
+  letter-spacing: 0.5px;
+}
+
+.ehr-title {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--slate-700);
+}
+
+.ehr-subtitle {
+  font-size: 12px;
+  color: var(--slate-500);
+  margin-top: 2px;
+}
+
+.patient-banner {
+  background: var(--slate-100);
+  border: 1px solid var(--slate-300);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+
+.patient-name {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--slate-900);
+}
+
+.patient-meta {
+  font-size: 13px;
+  color: var(--slate-600);
+  margin-top: 4px;
+  display: flex;
+  gap: 16px;
+}
+
+.patient-meta span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ehr-section {
+  margin-bottom: 20px;
+}
+
+.ehr-section-title {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--slate-500);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 10px;
+}
+
+.ehr-note {
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--slate-700);
+}
+
+.ehr-note p {
+  margin-bottom: 8px;
+}
+
+.ehr-placeholder {
+  height: 120px;
+  background: repeating-linear-gradient(
+    0deg,
+    var(--slate-100),
+    var(--slate-100) 14px,
+    transparent 14px,
+    transparent 28px
+  );
+  border-radius: var(--radius-sm);
+  opacity: 0.7;
+}
+
+/* ─── Side Panel ─── */
+.side-panel {
+  width: var(--panel-width);
+  min-width: var(--panel-width);
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  min-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.panel-header {
+  background: var(--slate-950);
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.panel-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.panel-icon {
+  width: 30px;
+  height: 30px;
+  background: linear-gradient(135deg, var(--blue-500), var(--blue-700));
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.panel-icon svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: white;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.panel-brand-text {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--white);
+  letter-spacing: -0.2px;
+}
+
+.panel-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--slate-400);
+  letter-spacing: 0.3px;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green-500);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+.status-dot.idle {
+  background: var(--slate-500);
+  animation: none;
+}
+
+.panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.panel-footer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--slate-200);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--slate-500);
+  background: var(--slate-100);
+}
+
+.panel-footer-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ─── Demo Conversation Panel ─── */
+.demo-conversation-panel {
+  width: 300px;
+  min-width: 300px;
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  height: 92vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--slate-200);
+}
+
+.demo-conversation-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--slate-200);
+  background: var(--slate-50);
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--slate-600);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.demo-conversation-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  scroll-behavior: smooth;
+}
+
+/* Thin, styled scrollbar for the conversation panel */
+.demo-conversation-body::-webkit-scrollbar {
+  width: 4px;
+}
+.demo-conversation-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.demo-conversation-body::-webkit-scrollbar-thumb {
+  background: var(--slate-300);
+  border-radius: 99px;
+}
+.demo-conversation-body::-webkit-scrollbar-thumb:hover {
+  background: var(--slate-400);
+}
+
+@keyframes bubbleFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.demo-conv-bubble {
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  max-width: 95%;
+  animation: bubbleFadeIn 0.25s ease forwards;
+}
+
+.demo-conv-bubble.patient {
+  background: var(--slate-100);
+  border: 1px solid var(--slate-200);
+  align-self: flex-start;
+  border-left: 3px solid var(--slate-500);
+}
+
+.demo-conv-bubble.clinician {
+  background: var(--blue-50);
+  border: 1px solid var(--blue-200);
+  align-self: flex-end;
+  border-right: 3px solid var(--blue-500);
+}
+
+.demo-conv-bubble.evaluating {
+  background: var(--amber-50);
+  border: 1px solid var(--amber-200);
+  align-self: flex-end;
+  border-right: 3px solid var(--amber-500);
+  font-style: italic;
+  color: var(--slate-600);
+}
+
+.demo-conv-speaker {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+  color: var(--slate-500);
+}
+
+.demo-conv-bubble.clinician .demo-conv-speaker { color: var(--blue-600); }
+.demo-conv-bubble.patient .demo-conv-speaker { color: var(--slate-600); }
+.demo-conv-bubble.evaluating .demo-conv-speaker { color: var(--amber-700); }
+
+/* ─── Views ─── */
+.view { display: none; }
+.view.active { display: block; }
+
+/* ─── Listening View ─── */
+.listening-view {
+  padding: 32px 20px;
+  text-align: center;
+}
+
+.waveform {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  height: 48px;
+  margin: 24px 0;
+}
+
+.wave-bar {
+  width: 3px;
+  border-radius: 2px;
+  background: var(--blue-500);
+  animation: wave 1.2s ease-in-out infinite;
+}
+
+.wave-bar:nth-child(1) { height: 12px; animation-delay: 0s; }
+.wave-bar:nth-child(2) { height: 20px; animation-delay: 0.1s; }
+.wave-bar:nth-child(3) { height: 32px; animation-delay: 0.2s; }
+.wave-bar:nth-child(4) { height: 24px; animation-delay: 0.3s; }
+.wave-bar:nth-child(5) { height: 40px; animation-delay: 0.15s; }
+.wave-bar:nth-child(6) { height: 28px; animation-delay: 0.25s; }
+.wave-bar:nth-child(7) { height: 16px; animation-delay: 0.35s; }
+.wave-bar:nth-child(8) { height: 36px; animation-delay: 0.05s; }
+.wave-bar:nth-child(9) { height: 20px; animation-delay: 0.2s; }
+.wave-bar:nth-child(10) { height: 10px; animation-delay: 0.3s; }
+.wave-bar:nth-child(11) { height: 28px; animation-delay: 0.1s; }
+.wave-bar:nth-child(12) { height: 14px; animation-delay: 0.25s; }
+
+@keyframes wave {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.4); }
+}
+
+.listening-label {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--slate-800);
+  margin-bottom: 8px;
+}
+
+.listening-sublabel {
+  font-size: 13px;
+  color: var(--slate-500);
+  line-height: 1.5;
+}
+
+.transcript-feed {
+  margin-top: 28px;
+  text-align: left;
+  border-top: 1px solid var(--slate-200);
+  padding-top: 20px;
+}
+
+.transcript-feed-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--slate-500);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 12px;
+}
+
+.transcript-line {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--slate-600);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--slate-100);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.4s ease;
+}
+
+.transcript-line.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.transcript-line .speaker {
+  font-weight: 600;
+  color: var(--slate-700);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.transcript-highlight {
+  background: var(--amber-100);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-weight: 500;
+  color: var(--amber-800);
+}
+
+/* ─── Detection View ─── */
+.detection-view {
+  padding: 20px;
+}
+
+.detection-card {
+  background: var(--amber-50);
+  border: 1.5px solid var(--amber-400);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.detection-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--amber-100);
+  color: var(--amber-800);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+  margin-bottom: 14px;
+}
+
+.detection-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--amber-500);
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+.detection-med-name {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--slate-900);
+  margin-bottom: 4px;
+}
+
+.detection-med-detail {
+  font-size: 13px;
+  color: var(--slate-600);
+  margin-bottom: 16px;
+}
+
+.detection-context {
+  font-size: 12.5px;
+  color: var(--slate-600);
+  line-height: 1.6;
+  margin-bottom: 18px;
+  padding: 10px 12px;
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--amber-400);
+}
+
+.detection-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn:active { transform: scale(0.97); }
+
+.btn-primary {
+  background: var(--slate-950);
+  color: var(--white);
+}
+.btn-primary:hover { background: var(--slate-800); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--slate-600);
+  border: 1px solid var(--slate-300);
+}
+.btn-ghost:hover { background: var(--slate-100); }
+
+.btn-sm {
+  font-size: 12px;
+  padding: 7px 14px;
+}
+
+/* ─── Evaluation Loading ─── */
+.eval-spinner {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.spinner-ring {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--slate-200);
+  border-top-color: var(--blue-500);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.eval-label {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--slate-800);
+  margin-bottom: 4px;
+}
+
+.eval-sublabel {
+  font-size: 12.5px;
+  color: var(--slate-500);
+  margin-bottom: 18px;
+  line-height: 1.4;
+}
+
+.eval-progress {
+  height: 4px;
+  background: var(--slate-200);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+
+.eval-progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--blue-500), var(--blue-600));
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+.eval-steps {
+  text-align: left;
+}
+
+.eval-step {
+  font-size: 12.5px;
+  color: var(--slate-500);
+  padding: 5px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.3s;
+}
+
+.eval-step.done {
+  color: var(--green-700);
+}
+
+.eval-step-icon {
+  font-size: 13px;
+  width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* ─── Assessment View ─── */
+.assessment-view {
+  padding: 0;
+}
+
+.assessment-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--slate-200);
+  background: var(--slate-100);
+}
+
+.assessment-toolbar-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--slate-600);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.assessment-toolbar-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.toolbar-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--slate-300);
+  background: var(--white);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--slate-600);
+  font-size: 14px;
+  transition: all 0.15s ease;
+}
+.toolbar-btn:hover { background: var(--slate-200); }
+
+/* Medication cards */
+.med-card {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--slate-200);
+  cursor: pointer;
+  transition: background 0.15s ease;
+  animation: slideUp 0.35s ease;
+}
+
+.med-card:hover { background: var(--slate-50); }
+
+.med-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.med-card-name {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--slate-900);
+}
+
+.med-card-form {
+  font-size: 12px;
+  color: var(--slate-500);
+  margin-top: 2px;
+}
+
+.risk-badge {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.risk-high {
+  background: var(--green-100);
+  color: var(--green-800);
+}
+.risk-medium {
+  background: var(--amber-100);
+  color: var(--amber-800);
+}
+.risk-low {
+  background: var(--red-100);
+  color: var(--red-700);
+}
+
+.med-card-rationale {
+  font-size: 13px;
+  color: var(--slate-600);
+  line-height: 1.55;
+  margin-bottom: 10px;
+}
+
+.med-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.med-card-source {
+  font-size: 11px;
+  color: var(--slate-400);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.med-card-expand {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--blue-600);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.med-card-expand svg {
+  width: 14px;
+  height: 14px;
+  stroke: var(--blue-600);
+  fill: none;
+  stroke-width: 2;
+  transition: transform 0.2s ease;
+}
+
+/* ─── Assessment Card Enhancements ─── */
+.assessed-card {
+  cursor: default;
+}
+
+.assessed-card:hover {
+  background: var(--white);
+}
+
+.med-card-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 6px;
+}
+
+.rec-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 20px;
+}
+
+.rec-divider-line {
+  flex: 1;
+  height: 1px;
+  background: var(--slate-200);
+}
+
+.rec-divider-label {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--green-700);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  white-space: nowrap;
+}
+
+.rec-card {
+  border-left: 3px solid var(--green-500);
+  cursor: default;
+  background: var(--green-50);
+}
+
+.rec-card:hover {
+  background: var(--green-50);
+}
+
+.rec-card-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--green-700);
+  background: var(--green-100);
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+
+.rec-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+
+.rec-card-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.action-detail-link {
+  background: var(--white);
+  color: var(--slate-600);
+  border: 1px solid var(--slate-300);
+}
+.action-detail-link:hover { background: var(--slate-100); }
+
+/* Quick Expand */
+.quick-expand {
+  margin-top: 12px;
+  border-top: 1px solid var(--green-100);
+  padding-top: 10px;
+}
+
+.quick-expand-toggle {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--slate-700);
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 6px 0;
+  transition: color 0.15s;
+}
+
+.quick-expand-toggle:hover { color: var(--blue-600); }
+
+.quick-expand-icon {
+  font-size: 14px;
+}
+
+.quick-expand-chevron {
+  margin-left: auto;
+  transition: transform 0.25s ease;
+}
+
+.quick-expand-toggle.open .quick-expand-chevron {
+  transform: rotate(180deg);
+}
+
+.quick-expand-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.35s ease;
+  padding: 0;
+}
+
+.quick-expand-content.open {
+  max-height: 600px;
+  padding: 10px 0 4px 0;
+}
+
+.quick-script {
+  background: var(--white);
+  border: 1px solid var(--blue-100);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--slate-700);
+  margin-bottom: 10px;
+  position: relative;
+  border-left: 3px solid var(--blue-400, #60a5fa);
+}
+
+.quick-script p {
+  margin-bottom: 6px;
+}
+
+.quick-script p:last-child {
+  margin-bottom: 0;
+}
+
+.quick-points {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.quick-point {
+  font-size: 12.5px;
+  color: var(--slate-600);
+  line-height: 1.5;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 3px 0;
+}
+
+.quick-point-bullet {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--blue-500);
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+.assessment-bottom-link {
+  padding: 12px 20px 16px;
+}
+
+/* ─── Detail View ─── */
+.detail-view {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.detail-view .detail-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.detail-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--slate-200);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.detail-back {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--slate-300);
+  background: var(--white);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--slate-600);
+  transition: all 0.15s ease;
+}
+
+.detail-back:hover { background: var(--slate-100); }
+
+.detail-header-info {
+  flex: 1;
+}
+
+.detail-header-name {
+  font-family: var(--font-heading);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--slate-900);
+}
+
+.detail-header-form {
+  font-size: 12px;
+  color: var(--slate-500);
+  margin-top: 1px;
+}
+
+.detail-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--slate-200);
+  padding: 0 20px;
+  background: var(--slate-100);
+}
+
+.detail-tab {
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--slate-500);
+  padding: 12px 14px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s;
+  white-space: nowrap;
+}
+
+.detail-tab:hover { color: var(--slate-700); }
+
+.detail-tab.active {
+  color: var(--slate-900);
+  font-weight: 600;
+}
+
+.detail-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 14px;
+  right: 14px;
+  height: 2px;
+  background: var(--slate-900);
+  border-radius: 2px;
+}
+
+.detail-content {
+  padding: 20px;
+}
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* Drivers panel */
+.driver-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--slate-100);
+}
+
+.driver-item:last-child { border-bottom: none; }
+
+.driver-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.driver-icon.barrier { background: var(--red-50); }
+.driver-icon.caution { background: var(--amber-50); }
+.driver-icon.ok { background: var(--green-50); }
+
+.driver-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--slate-800);
+  margin-bottom: 2px;
+}
+
+.driver-desc {
+  font-size: 12.5px;
+  color: var(--slate-600);
+  line-height: 1.5;
+}
+
+.driver-source {
+  font-size: 11px;
+  color: var(--slate-400);
+  margin-top: 4px;
+  font-family: var(--font-mono);
+}
+
+/* Alternatives panel */
+.alt-card {
+  background: var(--slate-100);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 12px;
+  border: 1px solid var(--slate-200);
+  transition: border-color 0.2s;
+}
+
+.alt-card:hover { border-color: var(--slate-400); }
+
+.alt-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.alt-card-name {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--slate-900);
+}
+
+.alt-card-form {
+  font-size: 12px;
+  color: var(--slate-500);
+  margin-top: 1px;
+}
+
+.alt-card-reason {
+  font-size: 12.5px;
+  color: var(--slate-600);
+  line-height: 1.55;
+  margin-bottom: 10px;
+}
+
+.alt-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.alt-tag {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 20px;
+  background: var(--white);
+  border: 1px solid var(--slate-300);
+  color: var(--slate-600);
+}
+
+.alt-tag.good {
+  background: var(--green-50);
+  border-color: var(--green-500);
+  color: var(--green-700);
+}
+
+/* Communication panel */
+.comm-section {
+  margin-bottom: 20px;
+}
+
+.comm-section-title {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--slate-700);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.comm-script {
+  background: var(--blue-50);
+  border: 1px solid var(--blue-100);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--slate-800);
+  position: relative;
+}
+
+.comm-script::before {
+  content: '"';
+  font-family: Georgia, serif;
+  font-size: 48px;
+  color: var(--blue-500);
+  opacity: 0.3;
+  position: absolute;
+  top: 4px;
+  left: 10px;
+  line-height: 1;
+}
+
+.comm-script p {
+  padding-left: 24px;
+}
+
+.comm-bullet-list {
+  list-style: none;
+  padding: 0;
+}
+
+.comm-bullet-list li {
+  font-size: 13px;
+  color: var(--slate-700);
+  line-height: 1.6;
+  padding: 8px 0 8px 24px;
+  position: relative;
+  border-bottom: 1px solid var(--slate-100);
+}
+
+.comm-bullet-list li:last-child { border-bottom: none; }
+
+.comm-bullet-list li::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--blue-500);
+  position: absolute;
+  left: 6px;
+  top: 15px;
+}
+
+.comm-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--slate-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.copy-btn {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--blue-600);
+  background: none;
+  border: 1px solid var(--blue-200, #bfdbfe);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.copy-btn:hover { background: var(--blue-50); }
+
+/* ─── Action Bar ─── */
+.action-bar {
+  padding: 16px 20px;
+  border-top: 1px solid var(--slate-200);
+  background: var(--white);
+}
+
+.action-bar-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--slate-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: 1;
+  justify-content: center;
+  min-width: 0;
+}
+
+.action-btn:active { transform: scale(0.97); }
+
+.action-accept {
+  background: var(--green-600);
+  color: var(--white);
+}
+.action-accept:hover { background: var(--green-700); }
+
+.action-reject {
+  background: var(--white);
+  color: var(--red-600);
+  border: 1px solid var(--red-200, #fecaca);
+}
+.action-reject:hover { background: var(--red-50); }
+
+.action-dismiss {
+  background: var(--white);
+  color: var(--slate-600);
+  border: 1px solid var(--slate-300);
+}
+.action-dismiss:hover { background: var(--slate-100); }
+
+.action-save {
+  background: var(--white);
+  color: var(--blue-600);
+  border: 1px solid var(--blue-200, #bfdbfe);
+}
+.action-save:hover { background: var(--blue-50); }
+
+/* ─── Saved View ─── */
+.saved-view {
+  padding: 20px;
+}
+
+.saved-header {
+  margin-bottom: 20px;
+}
+
+.saved-title {
+  font-family: var(--font-heading);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--slate-900);
+  margin-bottom: 4px;
+}
+
+.saved-subtitle {
+  font-size: 13px;
+  color: var(--slate-500);
+}
+
+.saved-card {
+  background: var(--slate-100);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 12px;
+  border: 1px solid var(--slate-200);
+  animation: slideUp 0.35s ease;
+}
+
+.saved-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.saved-card-name {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--slate-900);
+}
+
+.saved-card-status {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.saved-card-status.accepted {
+  background: var(--green-100);
+  color: var(--green-700);
+}
+
+.saved-card-status.saved {
+  background: var(--blue-100);
+  color: var(--blue-700);
+}
+
+.saved-card-detail {
+  font-size: 12.5px;
+  color: var(--slate-600);
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.saved-card-meta {
+  font-size: 11px;
+  color: var(--slate-400);
+  display: flex;
+  gap: 12px;
+}
+
+.saved-card-comm {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--slate-200);
+}
+
+.saved-card-comm-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--slate-500);
+  margin-bottom: 6px;
+}
+
+.saved-card-comm-text {
+  font-size: 12px;
+  color: var(--slate-600);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* ─── Toast ─── */
+.toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--slate-900);
+  color: var(--white);
+  padding: 14px 24px;
+  border-radius: var(--radius-lg);
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: var(--shadow-xl);
+  z-index: 100;
+  transition: transform 0.35s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toast.visible {
+  transform: translateX(-50%) translateY(0);
+}
+
+.toast-icon {
+  font-size: 16px;
+}
+
+/* ─── Demo Controls ─── */
+.demo-controls {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.demo-btn {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 12px 22px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  background: var(--slate-950);
+  color: var(--white);
+  box-shadow: var(--shadow-lg);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.demo-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
+}
+
+.demo-btn:active { transform: scale(0.97); }
+
+.demo-btn.reset {
+  background: var(--white);
+  color: var(--slate-700);
+  font-size: 12px;
+  padding: 8px 16px;
+}
+
+.demo-btn.mute {
+  background: var(--white);
+  color: var(--slate-500);
+  font-size: 12px;
+  padding: 8px 16px;
+  display: none;
+}
+
+.demo-btn.mute.muted {
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1.5px solid #fca5a5;
+  animation: mutePulse 2s ease-in-out infinite;
+}
+
+@keyframes mutePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.3); }
+  50%       { box-shadow: 0 0 0 6px rgba(220,38,38,0); }
+}
+
+.demo-step-label {
+  font-size: 11px;
+  color: var(--slate-500);
+  text-align: right;
+  max-width: 200px;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1100px) {
+  .demo-conversation-panel { display: none; }
+}
+@media (max-width: 900px) {
+  .page-wrapper {
+    flex-direction: column;
+    align-items: center;
+  }
+  .ehr-mock { display: none; }
+  .demo-conversation-panel { display: none; }
+  .side-panel {
+    width: 100%;
+    min-width: 0;
+    max-width: 460px;
+    min-height: 80vh;
+  }
+}
+
+/* ─── Transcript Ticker (visible from all views) ─── */
+.transcript-ticker {
+  border-top: 1px solid var(--slate-200);
+  background: var(--slate-950);
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.4s ease;
+}
+
+.transcript-ticker.visible {
+  max-height: 120px;
+  padding: 10px 16px;
+}
+
+.transcript-ticker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.transcript-ticker-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--slate-400);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ticker-pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green-500);
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+.ticker-pause-btn {
+  font-family: var(--font-body);
+  font-size: 10px;
+  color: var(--slate-400);
+  background: none;
+  border: 1px solid var(--slate-700);
+  border-radius: 4px;
+  padding: 2px 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ticker-pause-btn:hover {
+  background: var(--slate-800);
+  color: var(--slate-300);
+}
+
+.transcript-ticker-line {
+  font-size: 12px;
+  color: var(--slate-300);
+  line-height: 1.5;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: all 0.3s ease;
+  max-height: 60px;
+  overflow: hidden;
+}
+
+.transcript-ticker-line.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.transcript-ticker-line .speaker {
+  font-weight: 600;
+  color: var(--slate-400);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.transcript-ticker-line .transcript-highlight {
+  background: rgba(251,191,36,0.25);
+  color: var(--amber-400);
+}
+
+/* ─── Second Med Notification ─── */
+.new-med-notify {
+  display: none;
+  margin: 0 20px 12px;
+  padding: 12px 14px;
+  background: var(--amber-50);
+  border: 1.5px solid var(--amber-400);
+  border-radius: var(--radius-md);
+  animation: slideUp 0.4s ease;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.new-med-notify:hover { background: var(--amber-100); }
+.new-med-notify.show { display: block; }
+
+.new-med-notify-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--amber-700);
+  background: var(--amber-100);
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-bottom: 6px;
+}
+
+.new-med-notify-title {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--slate-900);
+}
+
+.new-med-notify-sub {
+  font-size: 12px;
+  color: var(--slate-600);
+  margin-top: 2px;
+}
+
+/* ─── Demo Controls v2 ─── */
+.demo-controls {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 50;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.demo-step-label {
+  font-size: 11px;
+  color: var(--slate-500);
+  text-align: right;
+  max-width: 260px;
+  margin-right: 4px;
+  background: var(--white);
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--slate-200);
+}
+
+/* ─── Mode Selector ─── */
+.mode-selector {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 60;
+  display: flex;
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--slate-200);
+  overflow: hidden;
+}
+
+.mode-btn {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 10px 16px;
+  border: none;
+  background: var(--white);
+  color: var(--slate-500);
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.mode-btn:not(:last-child) { border-right: 1px solid var(--slate-200); }
+.mode-btn:hover { background: var(--slate-100); }
+.mode-btn.active { background: var(--slate-950); color: var(--white); }
+
+.mode-btn .mode-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.5;
+}
+
+.mode-btn.active .mode-dot {
+  opacity: 1;
+  background: var(--green-500);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* ─── Settings Overlay ─── */
+.settings-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 200;
+  justify-content: center;
+  align-items: center;
+}
+
+.settings-overlay.open { display: flex; }
+
+.settings-panel {
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  width: 440px;
+  max-width: 90vw;
+  padding: 28px;
+  animation: slideUp 0.3s ease;
+}
+
+.settings-title {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--slate-900);
+  margin-bottom: 4px;
+}
+
+.settings-sub {
+  font-size: 13px;
+  color: var(--slate-500);
+  margin-bottom: 20px;
+}
+
+.settings-field {
+  margin-bottom: 16px;
+}
+
+.settings-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--slate-700);
+  margin-bottom: 6px;
+  display: block;
+}
+
+.settings-input {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--slate-300);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--slate-800);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.settings-input:focus { border-color: var(--blue-500); }
+
+.settings-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.settings-status {
+  font-size: 12px;
+  color: var(--green-700);
+  margin-top: 10px;
+  display: none;
+}
+
+.settings-status.show { display: block; }
+
+/* ─── Gear Button ─── */
+.gear-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.15);
+  color: var(--slate-400);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  margin-left: 10px;
+}
+
+.gear-btn:hover { background: rgba(255,255,255,0.25); color: var(--white); }
+
+/* ─── AI Generated Content ─── */
+.ai-generating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--blue-600);
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.ai-dot-pulse {
+  display: flex; gap: 3px;
+}
+
+.ai-dot-pulse span {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--blue-500);
+  animation: dotBounce 1.2s ease-in-out infinite;
+}
+
+.ai-dot-pulse span:nth-child(2) { animation-delay: 0.15s; }
+.ai-dot-pulse span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes dotBounce {
+  0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+  40% { opacity: 1; transform: scale(1.2); }
+}
+
+.ai-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--blue-600);
+  background: var(--blue-50);
+  border: 1px solid var(--blue-200);
+  border-radius: 10px;
+  padding: 2px 8px;
+  letter-spacing: 0.3px;
+}
+
+.ai-typing-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 14px;
+  background: var(--blue-500);
+  margin-left: 2px;
+  animation: blink 0.8s step-end infinite;
+  vertical-align: text-bottom;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* ─── AI clinician response line ─── */
+.transcript-line.ai-clinician {
+  border-left: 3px solid var(--blue-400);
+  padding-left: 10px;
+  background: linear-gradient(90deg, rgba(59,130,246,0.06), transparent);
+}
+
+.transcript-line.ai-clinician .speaker {
+  color: var(--blue-600);
+}
+
+.ai-thinking-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  font-size: 12px;
+  color: var(--slate-400);
+  font-style: italic;
+}
+
+.ai-thinking-dots {
+  display: flex; gap: 3px;
+}
+
+.ai-thinking-dots span {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--blue-400);
+  animation: dotBounce 1.2s ease-in-out infinite;
+}
+
+.ai-thinking-dots span:nth-child(2) { animation-delay: 0.15s; }
+.ai-thinking-dots span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes dotBounce {
+  0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+  40% { opacity: 1; transform: scale(1.2); }
+}
+
+/* ─── Live mic indicator ─── */
+.mic-live {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--red-600);
+  background: var(--red-50);
+  border: 1px solid var(--red-200);
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+}
+
+.mic-live.active { display: inline-flex; }
+
+.mic-live-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--red-500);
+  animation: pulse-dot 1s ease-in-out infinite;
+}
+
+/* Scrollbar */
+.panel-body::-webkit-scrollbar { width: 4px; }
+.panel-body::-webkit-scrollbar-track { background: transparent; }
+.panel-body::-webkit-scrollbar-thumb { background: var(--slate-300); border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+  <!-- EHR Mock Background -->
+  <div class="ehr-mock">
+    <div class="ehr-header">
+      <div class="ehr-logo">EHR</div>
+      <div>
+        <div class="ehr-title">Electronic Health Record</div>
+        <div class="ehr-subtitle">Ambulatory Visit — Encounter #42891</div>
+      </div>
+    </div>
+
+    <div class="patient-banner">
+      <div class="patient-name">Sarah Chen</div>
+      <div class="patient-meta">
+        <span>DOB: 04/12/1979</span>
+        <span>MRN: 0038-2947</span>
+        <span>Aetna PPO</span>
+      </div>
+    </div>
+
+    <div class="ehr-section">
+      <div class="ehr-section-title">Visit Reason</div>
+      <div class="ehr-note">
+        <p>Follow-up for obesity management. BMI 34.2. Patient reports attempting lifestyle modifications (diet, exercise) for 6+ months with minimal weight loss. Expresses frustration and readiness to discuss pharmacotherapy options.</p>
+      </div>
+    </div>
+
+    <div class="ehr-section">
+      <div class="ehr-section-title">Active Problems</div>
+      <div class="ehr-note">
+        <p>1. Obesity, BMI 34.2 (E66.01)<br>
+        2. Pre-diabetes, HbA1c 6.1% (R73.03)<br>
+        3. Hypertension, controlled on lisinopril 10mg (I10)</p>
+      </div>
+    </div>
+
+    <div class="ehr-section">
+      <div class="ehr-section-title">Current Medications</div>
+      <div class="ehr-note">
+        <p>Lisinopril 10mg daily<br>
+        Metformin 500mg BID<br>
+        Vitamin D3 2000 IU daily</p>
+      </div>
+    </div>
+
+    <div class="ehr-section">
+      <div class="ehr-section-title">Assessment &amp; Plan</div>
+      <div class="ehr-placeholder"></div>
+    </div>
+  </div>
+
+  <!-- Demo Conversation Panel -->
+  <div class="demo-conversation-panel">
+    <div class="demo-conversation-header">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+      Demo Conversation
+    </div>
+    <div class="demo-conversation-body" id="demoConversationBody"></div>
+  </div>
+
+  <!-- Side Panel — Prescription Assistant -->
+  <div class="side-panel">
+    <div class="panel-header">
+      <div class="panel-brand">
+        <div class="panel-icon">
+          <svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"></path></svg>
+        </div>
+        <span class="panel-brand-text">Prescription Assistant</span>
+      </div>
+      <div class="panel-status">
+        <div class="status-dot" id="statusDot" style="background: var(--blue-500);"></div>
+        <span id="statusText">Assessment Ready</span>
+        <button class="gear-btn" onclick="openSettings()" title="Azure AI Settings">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="panel-body" id="panelBody">
+
+      <!-- View 1: Listening -->
+      <div class="view" id="viewListening">
+        <div class="listening-view">
+          <div class="waveform" id="waveform">
+            <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+            <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+            <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+            <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+          </div>
+          <div class="listening-label" id="listeningLabel">Listening to visit…</div>
+          <div class="listening-sublabel" id="listeningSublabel">The Assistant will surface an access assessment when a medication is discussed.</div>
+          <div class="mic-live" id="micLiveIndicator"><span class="mic-live-dot"></span>Microphone active</div>
+
+          <div class="transcript-feed">
+            <div class="transcript-feed-label">Live Transcript</div>
+            <div id="liveTranscriptLines" style="display: none;"></div>
+            <div id="transcriptLines">
+              <div class="transcript-line visible" id="t1">
+                <span class="speaker">Clinician</span><br>
+                So tell me how things have been going with the diet and exercise plan we set up last time.
+              </div>
+              <div class="transcript-line visible" id="t2">
+                <span class="speaker">Patient</span><br>
+                Honestly, I've been trying for months, but nothing is really working. I feel pretty discouraged.
+              </div>
+              <div class="transcript-line visible" id="t3">
+                <span class="speaker">Clinician</span><br>
+                I understand. Let's talk about some medication options. Have you heard of <span class="transcript-highlight">semaglutide</span>? It's a GLP-1 receptor agonist that can help with weight loss.
+              </div>
+              <div class="transcript-line visible" id="t4">
+                <span class="speaker">Patient</span><br>
+                Yes, I've seen ads. I'd like to start something soon — I don't want to wait any longer.
+              </div>
+              <div class="transcript-line visible" id="t5">
+                <span class="speaker">Clinician</span><br>
+                I hear you. Let me take a quick look at what your insurance covers for this…
+              </div>
+              <div class="transcript-line visible" id="t6">
+                <span class="speaker">Patient</span><br>
+                Sure. Oh, I also wanted to ask — my friend has been taking <span class="transcript-highlight">tirzepatide</span>, Mounjaro? She says it's been amazing. Could we look into that too?
+              </div>
+              <div class="transcript-line visible" id="t7">
+                <span class="speaker">Clinician</span><br>
+                Absolutely, I can check that for you as well. Let me review the options.
+              </div>
+              <div class="transcript-line" id="t8">
+                <span class="speaker">Clinician</span><br>
+                So here's what I'm seeing. The medication we discussed — semaglutide — is still a good option for you clinically. However, your insurance requires us to try another medication first and get extra approval, which could take a few weeks.
+              </div>
+              <div class="transcript-line" id="t9">
+                <span class="speaker">Clinician</span><br>
+                One option is to start with generic phentermine for the next three months. This lets you begin treatment right away, and it may also improve our chances of getting semaglutide approved later.
+              </div>
+              <div class="transcript-line" id="t10">
+                <span class="speaker">Patient</span><br>
+                That makes sense. So I can start this one right away?
+              </div>
+              <div class="transcript-line" id="t11">
+                <span class="speaker">Clinician</span><br>
+                Yes — I'll send the prescription to your pharmacy today. You should be able to pick it up within a day or two. We'll monitor your progress and revisit the GLP-1 option at your three-month follow-up.
+              </div>
+              <div class="transcript-line" id="t12">
+                <span class="speaker">Patient</span><br>
+                Okay, I like that plan. Let's do it.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- View 2: Evaluating (auto-triggered) -->
+      <div class="view" id="viewDetection">
+        <div class="detection-view">
+          <div class="detection-card" style="text-align: center;">
+            <div class="detection-badge">
+              <div class="detection-badge-dot"></div>
+              Medication Detected
+            </div>
+            <div class="detection-med-name" style="margin-bottom: 2px;">Semaglutide (Wegovy)</div>
+            <div class="detection-med-detail" style="margin-bottom: 20px;">GLP-1 receptor agonist · Injectable</div>
+
+            <div class="eval-spinner">
+              <div class="spinner-ring" style="animation: auto ease 0s 1 normal none running none; border-top-color: var(--green-500); border-right-color: ; border-bottom-color: ; border-left-color: ;"></div>
+            </div>
+            <div class="eval-label" id="evalLabel">Assessment ready</div>
+            <div class="eval-sublabel" id="evalSublabel">Semaglutide — Medium access risk identified</div>
+
+            <div class="eval-progress">
+              <div class="eval-progress-bar" id="evalProgressBar" style="transition: width 3000ms linear; width: 100%;"></div>
+            </div>
+
+            <div class="eval-steps" id="evalSteps">
+              <div class="eval-step done" id="es1">
+                <span class="eval-step-icon">✓</span> ✓ Non-Preferred Brand — Tier 4</div>
+              <div class="eval-step done" id="es2">
+                <span class="eval-step-icon">✓</span> ✓ PA required (5–10 business days, 62% approval)</div>
+              <div class="eval-step done" id="es3">
+                <span class="eval-step-icon">✓</span> ✓ Step therapy mandate — must trial preferred agent ≥ 90 days</div>
+              <div class="eval-step done" id="es4">
+                <span class="eval-step-icon">✓</span> ✓ Est. $1,349.02/month (40% coinsurance)</div>
+              <div class="eval-step done" id="es5">
+                <span class="eval-step-icon">✓</span> ✓ 5 alternatives — Phentermine (Tier 1, no PA)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- View 3: Assessment List -->
+      <div class="view active" id="viewAssessment">
+        <div class="assessment-view">
+          <div class="assessment-toolbar">
+            <div class="assessment-toolbar-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+              Current Visit — Sarah Chen
+            </div>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px;">
+              <span style="font-size: 10px; font-weight: 600; color: var(--blue-700); background: var(--blue-50); border: 1px solid var(--blue-200); border-radius: 10px; padding: 2px 8px; display: inline-flex; align-items: center; gap: 3px;">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 7V4h16v3"></path><path d="M9 20h6"></path><path d="M12 4v16"></path></svg>
+                Aetna PPO Formulary
+              </span>
+              <span style="font-size: 10px; font-weight: 600; color: var(--slate-500); background: var(--slate-100); border: 1px solid var(--slate-200); border-radius: 10px; padding: 2px 8px;">
+                CVS Caremark PBM
+              </span>
+            </div>
+          </div>
+
+          <!-- Assessed medication -->
+          <div class="med-card assessed-card">
+            <div class="med-card-top">
+              <div>
+                <div class="med-card-name">Semaglutide (Wegovy)</div>
+                <div class="med-card-form">2.4mg weekly · SubQ injection</div>
+              </div>
+              <div class="risk-badge risk-medium">Medium</div>
+            </div>
+            <div class="med-card-rationale">
+              Covered under Aetna PPO, but prior authorization required. Step therapy likely — plan typically requires documented trial of lifestyle modification and at least one first-line agent before approval.
+            </div>
+            <div class="med-card-footer">
+              <div class="med-card-source">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+                Aetna PPO formulary · CVS Caremark · Updated 3 days ago
+              </div>
+              <div class="med-card-expand" onclick="goToDetail(&#39;semaglutide&#39;)">
+                View details
+                <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </div>
+            </div>
+            <div class="med-card-actions">
+              <button class="action-btn action-dismiss btn-sm" onclick="handleAction(&#39;dismiss&#39;)" style="flex: 0 0 auto;">✕ Dismiss</button>
+            </div>
+          </div>
+
+          <!-- Recommendation divider -->
+          <div class="rec-divider">
+            <div class="rec-divider-line"></div>
+            <div class="rec-divider-label">Recommended Alternative</div>
+            <div class="rec-divider-line"></div>
+          </div>
+
+          <!-- Recommended alternative -->
+          <div class="med-card rec-card">
+            <div class="rec-card-flag">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              Faster path to start
+            </div>
+            <div class="med-card-top">
+              <div>
+                <div class="med-card-name">Phentermine (Generic)</div>
+                <div class="med-card-form">15–37.5mg daily · Oral tablet</div>
+              </div>
+              <div class="risk-badge risk-high">High</div>
+            </div>
+            <div class="med-card-rationale">
+              No prior auth needed. Covered on preferred generic tier. Starting phentermine now also satisfies GLP-1 step therapy, strengthening a future semaglutide PA submission.
+            </div>
+            <div class="rec-card-tags">
+              <span class="alt-tag good">No PA needed</span>
+              <span class="alt-tag good">~$10–$30/mo</span>
+              <span class="alt-tag good">Satisfies step therapy</span>
+            </div>
+
+            <div class="rec-card-actions">
+              <button class="action-btn action-accept btn-sm" onclick="handleAction(&#39;accept&#39;)">✓ Accept</button>
+              <button class="action-btn action-save btn-sm" onclick="handleAction(&#39;save&#39;)">⏳ Save</button>
+              <button class="action-btn action-dismiss btn-sm" onclick="handleAction(&#39;dismiss&#39;)">✕ Dismiss</button>
+              <button class="action-btn action-detail-link btn-sm" onclick="goToDetail(&#39;semaglutide&#39;); switchTabById(&#39;alternatives&#39;);">More options</button>
+            </div>
+
+            <!-- Quick expand: Explain to patient -->
+            <div class="quick-expand">
+              <button class="quick-expand-toggle" onclick="toggleQuickExpand(this)">
+                <span class="quick-expand-icon">💬</span>
+                Explain to patient
+                <svg class="quick-expand-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </button>
+              <div class="quick-expand-content" id="quickExpandContent">
+                <div id="aiScriptContainer"><div class="quick-script"><p>"The medication we discussed — semaglutide — is still a good option for you clinically. However, your insurance plan requires us to try another medication first and get extra approval, which could take a few weeks.</p><p>One option is to start with generic phentermine for the next three months. This lets you begin treatment right away, and it may also improve our chances of getting semaglutide approved later if we still need it.</p><p>Let me walk you through both options so we can choose the best next step for you."</p></div><div class="quick-points"><div class="quick-point"><span class="quick-point-bullet"></span>PA + step therapy would delay semaglutide by weeks</div><div class="quick-point"><span class="quick-point-bullet"></span>Phentermine can start within days at much lower cost</div><div class="quick-point"><span class="quick-point-bullet"></span>3-month trial builds case for future GLP-1 approval</div><div class="quick-point"><span class="quick-point-bullet"></span>We'll revisit semaglutide at follow-up</div></div></div>
+                <button class="copy-btn" onclick="event.stopPropagation(); copyScript();" style="margin-top: 8px;">
+                  📋 Copy script
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Second medication notification -->
+          <div class="new-med-notify show" id="secondMedNotify">
+            <div class="new-med-notify-badge">
+              <div class="detection-badge-dot"></div>
+              New Medication Detected
+            </div>
+            <div class="new-med-notify-title" onclick="showTirzepatideAssessment()" style="cursor:pointer;">Tirzepatide (Mounjaro)</div>
+            <div class="new-med-notify-sub" onclick="showTirzepatideAssessment()" style="cursor:pointer;">Patient mentioned — tap to view assessment</div>
+            <button class="action-btn action-dismiss btn-sm" onclick="event.stopPropagation(); document.getElementById(&#39;secondMedNotify&#39;).classList.remove(&#39;show&#39;); showToast(&#39;✕&#39;, &#39;Tirzepatide dismissed&#39;);" style="flex: 0 0 auto; margin-top: 8px;">✕ Dismiss</button>
+          </div>
+
+          <!-- View details link for full drill-down -->
+          <div class="assessment-bottom-link">
+            <button class="btn btn-ghost btn-sm" onclick="goToDetail(&#39;semaglutide&#39;)" style="width: 100%;">
+              View full assessment details →
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- View 4: Detail / Drill-down -->
+      <div class="view" id="viewDetail">
+        <div class="detail-view">
+          <div class="detail-header">
+            <button class="detail-back" onclick="goBackToAssessment()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <div class="detail-header-info">
+              <div class="detail-header-name">Semaglutide (Wegovy)</div>
+              <div class="detail-header-form">2.4mg weekly · SubQ injection</div>
+            </div>
+            <div class="risk-badge risk-medium">Medium</div>
+          </div>
+
+          <div class="detail-tabs">
+            <button class="detail-tab active" data-tab="drivers" onclick="switchTab(this)">Access Drivers</button>
+            <button class="detail-tab" data-tab="alternatives" onclick="switchTab(this)">Alternatives</button>
+            <button class="detail-tab" data-tab="communication" onclick="switchTab(this)">Communication</button>
+          </div>
+
+          <div class="detail-content">
+            <!-- Drivers Tab -->
+            <div class="tab-panel active" id="tabDrivers">
+              <div class="driver-item">
+                <div class="driver-icon caution">⚠️</div>
+                <div>
+                  <div class="driver-label">Prior Authorization Required</div>
+                  <div class="driver-desc">Aetna PPO requires PA for all GLP-1 agonists for obesity. Typical turnaround is 5–10 business days. Historical approval rate for this plan: ~68%.</div>
+                  <div class="driver-source">Source: Aetna formulary 2026 Q1</div>
+                </div>
+              </div>
+              <div class="driver-item">
+                <div class="driver-icon barrier">🚫</div>
+                <div>
+                  <div class="driver-label">Step Therapy Requirement</div>
+                  <div class="driver-desc">Plan requires documented trial of at least one first-line weight management medication (e.g., phentermine, orlistat, or naltrexone-bupropion) for ≥3 months before GLP-1 approval.</div>
+                  <div class="driver-source">Source: Aetna UM policy OB-2026</div>
+                </div>
+              </div>
+              <div class="driver-item">
+                <div class="driver-icon caution">💰</div>
+                <div>
+                  <div class="driver-label">High Patient Cost Exposure</div>
+                  <div class="driver-desc">Even if approved, estimated specialty-tier copay is $150–$250/month after PA. Manufacturer savings card may reduce to ~$25/month for commercially insured patients.</div>
+                  <div class="driver-source">Source: RTBT estimate · Novo Nordisk savings program</div>
+                </div>
+              </div>
+              <div class="driver-item">
+                <div class="driver-icon ok">✓</div>
+                <div>
+                  <div class="driver-label">Pharmacy Routing</div>
+                  <div class="driver-desc">Available through retail and mail-order pharmacy. No specialty pharmacy mandate for this plan.</div>
+                  <div class="driver-source">Source: Aetna pharmacy network rules</div>
+                </div>
+              </div>
+              <div class="driver-item">
+                <div class="driver-icon ok">✓</div>
+                <div>
+                  <div class="driver-label">Clinical Eligibility</div>
+                  <div class="driver-desc">Patient meets BMI criteria (≥30 or ≥27 with comorbidity). Pre-diabetes qualifies as a weight-related comorbidity for coverage purposes.</div>
+                  <div class="driver-source">Source: FDA label · Aetna criteria</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Alternatives Tab -->
+            <div class="tab-panel" id="tabAlternatives">
+              <div style="font-size: 12.5px; color: var(--slate-600); margin-bottom: 16px; line-height: 1.5;">
+                Because semaglutide faces step therapy and PA delays, these alternatives may allow a faster start while preserving the option to pursue a GLP-1 later.
+              </div>
+
+              <div class="alt-card">
+                <div class="alt-card-top">
+                  <div>
+                    <div class="alt-card-name">Phentermine (Generic)</div>
+                    <div class="alt-card-form">15–37.5mg daily · Oral tablet</div>
+                  </div>
+                  <div class="risk-badge risk-high">High</div>
+                </div>
+                <div class="alt-card-reason">
+                  Covered under Aetna PPO preferred generic tier with no prior authorization. Fastest path to starting therapy. A 3-month trial may also satisfy GLP-1 step therapy requirements, strengthening a future PA submission for semaglutide if needed.
+                </div>
+                <div class="alt-card-tags">
+                  <span class="alt-tag good">No PA needed</span>
+                  <span class="alt-tag good">Low cost (~$10–$30/mo)</span>
+                  <span class="alt-tag good">Satisfies step therapy</span>
+                  <span class="alt-tag">Short-term use (≤12 wk)</span>
+                </div>
+              </div>
+
+              <div class="alt-card">
+                <div class="alt-card-top">
+                  <div>
+                    <div class="alt-card-name">Naltrexone-Bupropion (Contrave)</div>
+                    <div class="alt-card-form">8/90mg escalating dose · Oral tablet</div>
+                  </div>
+                  <div class="risk-badge risk-high">High</div>
+                </div>
+                <div class="alt-card-reason">
+                  Covered on Aetna PPO formulary, brand preferred tier. No prior auth required for initial fill. May also satisfy GLP-1 step therapy requirements. Good option if phentermine is contraindicated.
+                </div>
+                <div class="alt-card-tags">
+                  <span class="alt-tag good">No PA needed</span>
+                  <span class="alt-tag">Brand copay (~$50–$80/mo)</span>
+                  <span class="alt-tag good">Satisfies step therapy</span>
+                  <span class="alt-tag">Long-term use OK</span>
+                </div>
+              </div>
+
+              <div class="alt-card">
+                <div class="alt-card-top">
+                  <div>
+                    <div class="alt-card-name">Liraglutide (Saxenda)</div>
+                    <div class="alt-card-form">3mg daily · SubQ injection</div>
+                  </div>
+                  <div class="risk-badge risk-medium">Medium</div>
+                </div>
+                <div class="alt-card-reason">
+                  Also a GLP-1 but with slightly different PA pathway under this plan. Same step therapy applies, but may have a higher historical approval rate (~74%) due to longer market availability and established PA workflows.
+                </div>
+                <div class="alt-card-tags">
+                  <span class="alt-tag">PA required</span>
+                  <span class="alt-tag">Step therapy applies</span>
+                  <span class="alt-tag">Higher approval rate</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Communication Tab -->
+            <div class="tab-panel" id="tabCommunication">
+              <div id="commTabContent">
+                <div class="comm-section">
+                  <div class="comm-section-title">
+                    💬 Suggested Conversation Script
+                    <button class="copy-btn" onclick="copyScript()">Copy</button>
+                  </div>
+                  <div class="comm-script">
+                    <p>"The medication we discussed — semaglutide — is still a good option for you clinically. However, your insurance plan requires us to try another medication first and get extra approval, which could take a few weeks.</p>
+                    <p style="margin-top: 10px;">One option, if it's a safe fit for you, is to start with generic phentermine for the next three months. This lets you begin treatment right away, and it may also improve our chances of getting semaglutide approved later if we still need it.</p>
+                    <p style="margin-top: 10px;">Let me walk you through both options so we can choose the best next step for you."</p>
+                  </div>
+                </div>
+
+                <div class="comm-section">
+                  <div class="comm-section-title">🎯 Key Points to Cover</div>
+                  <ul class="comm-bullet-list">
+                    <li><strong>Why not semaglutide right away:</strong> Insurance requires prior authorization and a trial of another medication first. This could delay starting treatment by several weeks.</li>
+                    <li><strong>Why phentermine as a starting option:</strong> It's covered with no approval needed and costs much less. Starting it now means the patient doesn't have to wait to begin treatment.</li>
+                    <li><strong>The path back to semaglutide:</strong> After 3 months on phentermine, we'll have documentation that strengthens the approval request for semaglutide if clinically appropriate.</li>
+                    <li><strong>What the patient should expect:</strong> They can pick up phentermine at their regular pharmacy within days, not weeks. We'll monitor progress and revisit the GLP-1 option at the 3-month follow-up.</li>
+                  </ul>
+                </div>
+
+                <div class="comm-section">
+                  <div class="comm-section-title">🚫 What Not to Say</div>
+                  <ul class="comm-bullet-list">
+                    <li>Avoid framing it as "your insurance won't pay for it" — instead explain the process and timeline.</li>
+                    <li>Avoid implying that phentermine is inferior — position it as a practical first step in a staged plan.</li>
+                    <li>Avoid making guarantees about future semaglutide approval — explain it as an improved likelihood.</li>
+                  </ul>
+                </div>
+
+                <div class="comm-section">
+                  <div class="comm-section-title">📋 Next Steps for the Patient</div>
+                  <ul class="comm-bullet-list">
+                    <li>Prescription for phentermine sent to patient's preferred pharmacy.</li>
+                    <li>Follow-up appointment in 3 months to assess progress and revisit GLP-1 options.</li>
+                    <li>If we proceed with semaglutide PA, the clinic will handle the paperwork — patient doesn't need to do anything extra.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Bar -->
+          <div class="action-bar">
+            <div class="action-bar-label">Clinician Decision</div>
+            <div class="action-buttons">
+              <button class="action-btn action-accept" onclick="handleAction(&#39;accept&#39;)">✓ Accept</button>
+              <button class="action-btn action-save" onclick="handleAction(&#39;save&#39;)">⏳ Save</button>
+              <button class="action-btn action-dismiss" onclick="handleAction(&#39;dismiss&#39;)">✕ Dismiss</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- View 5: Tirzepatide Assessment -->
+      <div class="view" id="viewTirzepatide">
+        <div class="detail-view">
+          <div class="detail-header">
+            <button class="detail-back" onclick="goBackToAssessment()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <div class="detail-header-info">
+              <div class="detail-header-name">Tirzepatide (Mounjaro)</div>
+              <div class="detail-header-form">15mg weekly · SubQ injection</div>
+            </div>
+            <div class="risk-badge risk-low">Low</div>
+          </div>
+
+          <div style="padding: 20px;">
+            <div class="med-card-rationale" style="font-size: 14px; margin-bottom: 16px;">
+              Not covered for obesity under Aetna PPO. Currently FDA-approved for type 2 diabetes only. Off-label obesity use is not reimbursable under this plan, and prior auth would likely be denied.
+            </div>
+
+            <div class="driver-item">
+              <div class="driver-icon barrier">🚫</div>
+              <div>
+                <div class="driver-label">Not on Formulary for Obesity</div>
+                <div class="driver-desc">Tirzepatide (Mounjaro) is listed under Aetna PPO for type 2 diabetes only. No coverage pathway exists for obesity indication under current formulary.</div>
+                <div class="driver-source">Source: Aetna formulary 2026 Q1</div>
+              </div>
+            </div>
+            <div class="driver-item">
+              <div class="driver-icon barrier">🚫</div>
+              <div>
+                <div class="driver-label">No FDA Obesity Indication</div>
+                <div class="driver-desc">Unlike semaglutide (Wegovy), tirzepatide does not yet have FDA approval for weight management. Off-label PA submissions have a very low approval rate (~12%) for this plan.</div>
+                <div class="driver-source">Source: FDA label · Aetna UM policy</div>
+              </div>
+            </div>
+            <div class="driver-item">
+              <div class="driver-icon caution">💰</div>
+              <div>
+                <div class="driver-label">Very High Out-of-Pocket Cost</div>
+                <div class="driver-desc">Without coverage, cash price is ~$1,050/month. Manufacturer savings card available for commercially insured patients but requires active Rx — may reduce to ~$25/month if eligible.</div>
+                <div class="driver-source">Source: Lilly savings program · GoodRx</div>
+              </div>
+            </div>
+            <div class="driver-item">
+              <div class="driver-icon ok">✓</div>
+              <div>
+                <div class="driver-label">Clinical Eligibility (if approved)</div>
+                <div class="driver-desc">Patient's BMI and pre-diabetes would qualify under clinical criteria. However, payer does not recognize the obesity indication for this drug.</div>
+                <div class="driver-source">Source: FDA label · clinical guidelines</div>
+              </div>
+            </div>
+
+            <div style="margin-top: 20px; padding: 14px; background: var(--blue-50); border: 1px solid var(--blue-100); border-radius: var(--radius-md);">
+              <div style="font-size: 13px; font-weight: 600; color: var(--slate-800); margin-bottom: 6px;">💬 How to address with patient</div>
+              <div style="font-size: 13px; color: var(--slate-700); line-height: 1.6;">
+                "I understand your friend has had a great experience with Mounjaro. It is an effective medication, but right now it's only approved and covered by insurance for diabetes — not yet for weight management specifically. That means your plan wouldn't cover it for this use, and the out-of-pocket cost would be quite high. The good news is we have other options that your insurance will support, and we can revisit tirzepatide if the FDA indication expands or your plan changes."
+              </div>
+            </div>
+
+            <div class="rec-card-actions" style="margin-top: 16px;">
+              <button class="action-btn action-save btn-sm" onclick="showToast(&#39;⏳&#39;, &#39;Tirzepatide saved — revisit if indication changes&#39;); goBackToAssessment();">⏳ Save for Later</button>
+              <button class="action-btn action-dismiss btn-sm" onclick="showToast(&#39;✕&#39;, &#39;Tirzepatide dismissed&#39;); goBackToAssessment();">✕ Dismiss</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- View 6: Saved / Audit -->
+      <div class="view" id="viewSaved">
+        <div class="saved-view">
+          <div class="saved-header">
+            <div class="saved-title">Visit Summary</div>
+            <div class="saved-subtitle">Sarah Chen · March 11, 2026 · 2:34 PM</div>
+          </div>
+
+          <div class="saved-card" id="savedCardAccepted">
+            <div class="saved-card-top">
+              <div class="saved-card-name">Phentermine (Generic)</div>
+              <div class="saved-card-status accepted">✓ Accepted</div>
+            </div>
+            <div class="saved-card-detail">
+              Recommended as a faster-start alternative to semaglutide. No PA required. Satisfies step therapy requirements for future GLP-1 PA submission.
+            </div>
+            <div class="saved-card-meta">
+              <span>Access: High</span>
+              <span>Est. cost: $10–$30/mo</span>
+            </div>
+            <div class="saved-card-comm">
+              <div class="saved-card-comm-label">Communication Summary Used</div>
+              <div class="saved-card-comm-text">
+                Explained that semaglutide requires step therapy and PA. Recommended starting phentermine now to begin treatment faster and build documentation for future GLP-1 approval. Patient agreed to staged plan.
+              </div>
+            </div>
+          </div>
+
+          <div class="saved-card">
+            <div class="saved-card-top">
+              <div class="saved-card-name">Semaglutide (Wegovy)</div>
+              <div class="saved-card-status saved">⏳ Revisit Later</div>
+            </div>
+            <div class="saved-card-detail">
+              Originally discussed. PA + step therapy required. Plan to re-assess at 3-month follow-up after phentermine trial.
+            </div>
+            <div class="saved-card-meta">
+              <span>Access: Medium</span>
+              <span>PA turnaround: 5–10 days</span>
+            </div>
+          </div>
+
+          <div style="margin-top: 20px; padding: 14px; background: var(--slate-100); border-radius: var(--radius-md); border: 1px solid var(--slate-200);">
+            <div style="font-size: 11px; font-weight: 600; color: var(--slate-500); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Audit Trail</div>
+            <div style="font-size: 12px; color: var(--slate-600); line-height: 1.8; font-family: var(--font-mono);">
+              <div>14:34:12 — Semaglutide detected via transcript</div>
+              <div>14:34:15 — Clinician confirmed medication</div>
+              <div>14:34:18 — Assessment generated (Medium)</div>
+              <div>14:36:42 — Clinician viewed alternatives</div>
+              <div>14:37:05 — Clinician viewed communication script</div>
+              <div>14:38:21 — Decision: Accept alternative (Phentermine)</div>
+              <div>14:38:21 — Communication summary saved</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 16px; text-align: center;">
+            <button class="btn btn-ghost btn-sm" onclick="goToListening()" style="margin: 0 auto;">
+              ← Back to Listening
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Transcript Ticker (visible when not on listening view) -->
+    <div class="transcript-ticker visible" id="transcriptTicker">
+      <div class="transcript-ticker-header">
+        <div class="transcript-ticker-label">
+          <div class="ticker-pulse" id="tickerPulse"></div>
+          Live Conversation
+        </div>
+        <button class="ticker-pause-btn" id="tickerPauseBtn" onclick="togglePause()">Pause</button>
+      </div>
+      <div class="transcript-ticker-line visible" id="tickerLine"><span class="speaker">Clinician</span><br>Of course. That's what I'm here for. We're going to get you started on the right track.</div>
+    </div>
+
+    <div class="panel-footer">
+      <div class="panel-footer-left">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        HIPAA compliant · Encrypted
+      </div>
+      <span>v1.0 MVP</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- Mode Selector -->
+<div class="mode-selector" id="modeSelector">
+  <button class="mode-btn active" id="modeScripted" onclick="setMode(&#39;scripted&#39;)"><span class="mode-dot"></span>Scripted</button>
+  <button class="mode-btn" id="modeLive" onclick="setMode(&#39;live&#39;)"><span class="mode-dot"></span>Live (You = Patient, AI = Clinician)</button>
+</div>
+
+<!-- Settings Overlay -->
+<div class="settings-overlay" id="settingsOverlay" onclick="if(event.target===this)closeSettings()">
+  <div class="settings-panel">
+    <div class="settings-title">Azure AI Settings</div>
+    <div class="settings-sub">Enter your Azure AI Foundry endpoint and key. Stored in your browser only.</div>
+    <div class="settings-field">
+      <label class="settings-label">Endpoint URL</label>
+      <input class="settings-input" id="azureEndpoint" placeholder="https://your-resource.services.ai.azure.com/models/chat/completions?api-version=2024-05-01-preview">
+    </div>
+    <div class="settings-field">
+      <label class="settings-label">API Key</label>
+      <input class="settings-input" id="azureKey" type="password" placeholder="Enter your API key">
+    </div>
+    <div class="settings-actions">
+      <button class="btn btn-primary btn-sm" onclick="saveSettings()">Save</button>
+      <button class="btn btn-ghost btn-sm" onclick="testAzure()">Test Connection</button>
+      <button class="btn btn-ghost btn-sm" onclick="closeSettings()">Cancel</button>
+    </div>
+    <div class="settings-status" id="settingsStatus"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <span class="toast-icon">💊</span>
+  <span id="toastText">New medication detected: Tirzepatide</span>
+</div>
+
+<!-- Demo Controls -->
+<div class="demo-controls">
+  <div class="demo-step-label" id="demoStepLabel">Patient mentioned tirzepatide — new med detected</div>
+  <button class="demo-btn" id="demoFF" onclick="fastForward()" style="display: flex; background: var(--amber-600);">⏩ Fast-forward</button>
+  <button class="demo-btn" id="demoStart" onclick="startDemo()" style="display: none;">▶ Start Demo</button>
+  <button class="demo-btn mute" id="demoMute" onclick="toggleMute()">🎙 Mute</button>
+  <button class="demo-btn reset" onclick="resetDemo()">↺ Reset</button>
+</div>
+
+<script>
+/* ─── State ─── */
+const views = ['viewListening', 'viewDetection', 'viewAssessment', 'viewDetail', 'viewTirzepatide', 'viewSaved'];
+let timeouts = [];
+let paused = false;
+let pausedAt = 0;
+let demoStartTime = 0;
+let demoRunning = false;
+let acceptTriggered = false;
+let currentActiveView = 'viewListening';
+let demoMode = 'scripted';
+let recognition = null;
+let liveMedDetected = { semaglutide: false, tirzepatide: false };
+let liveMuted = false;
+let aiScriptGenerated = false;
+let conversationHistory = [];
+let isGeneratingClinicianResponse = false;
+let pendingPatientBuffer = [];
+let ttsUtterance = null;
+let demoConvReviewingTimeouts = [];
+let demoConvReviewingIndex = 0;
+const AZURE_DEFAULT_ENDPOINT = '';
+const AZURE_DEFAULT_KEY = '';
+
+// Returns endpoint/key from localStorage if user has overridden them, otherwise uses hardcoded defaults
+function getAzureEndpoint() { return localStorage.getItem('azure_endpoint') || AZURE_DEFAULT_ENDPOINT; }
+function getAzureKey()      { return localStorage.getItem('azure_key')      || AZURE_DEFAULT_KEY; }
+
+// On load, if keys are missing, immediately open settings
+document.addEventListener('DOMContentLoaded', () => {
+  if (!getAzureKey() || !getAzureEndpoint()) {
+    openSettings();
+  }
+});
+
+/* ─── Scripted data ─── */
+const TRANSCRIPT = [
+  { id: 't1', time: 0 },
+  { id: 't2', time: 3500 },
+  { id: 't3', time: 7000 },
+  { id: 't4', time: 11000 },
+  { id: 't5', time: 19000 },
+  { id: 't6', time: 23000, hasMed2: true },
+  { id: 't7', time: 28000 },
+];
+
+const ACCEPT_TRANSCRIPT = [
+  { id: 't8',  delay: 800 },
+  { id: 't9',  delay: 5500 },
+  { id: 't10', delay: 9500 },
+  { id: 't11', delay: 12500 },
+  { id: 't12', delay: 16000 },
+];
+
+const BG_CONVERSATION = [
+  { speaker: 'Clinician', text: "While I'm looking at this, can you remind me — are you taking any other supplements besides the vitamin D?", time: 32000 },
+  { speaker: 'Patient', text: "Just a multivitamin. Nothing else really.", time: 36000 },
+  { speaker: 'Clinician', text: "Good. And you mentioned you've been exercising — what does that look like for you right now?", time: 40000 },
+  { speaker: 'Patient', text: "I try to walk about 30 minutes most days. Sometimes I do a workout video on the weekends.", time: 44500 },
+  { speaker: 'Clinician', text: "That's great, actually. That level of activity is helpful and we want to keep that going regardless of which medication we choose.", time: 49000 },
+  { speaker: 'Patient', text: "Yeah, I don't mind the exercise part. It's just the scale that's been frustrating.", time: 53500 },
+  { speaker: 'Clinician', text: "Completely understandable. Weight management is complex — it's not just willpower. That's exactly why medication can be a useful tool alongside what you're already doing.", time: 58000 },
+  { speaker: 'Patient', text: "That's good to hear. I was worried you'd say I just need to try harder.", time: 63000 },
+  { speaker: 'Clinician', text: "Not at all. The research is very clear that for many patients, lifestyle alone isn't enough once BMI reaches a certain point. Medication helps close that gap.", time: 67500 },
+  { speaker: 'Patient', text: "What about side effects? My friend on Mounjaro said she had some nausea at first.", time: 72500 },
+  { speaker: 'Clinician', text: "That's a common question. Nausea is the most reported side effect with GLP-1 medications. With phentermine, the side effect profile is a bit different — some patients notice dry mouth, mild insomnia, or slight increase in heart rate.", time: 77000 },
+  { speaker: 'Patient', text: "Is that safe with my blood pressure medication?", time: 83000 },
+  { speaker: 'Clinician', text: "Good question. Your blood pressure is well controlled on lisinopril, and we'll monitor it closely. At the dose we'd start with, phentermine is generally well tolerated.", time: 87500 },
+  { speaker: 'Patient', text: "Okay, that makes me feel better. And the phentermine — is it something I take every day?", time: 93000 },
+  { speaker: 'Clinician', text: "Yes, it's a once-daily oral tablet. You'd take it in the morning. We typically start at a lower dose and adjust if needed.", time: 97500 },
+  { speaker: 'Patient', text: "That's easy enough. Much better than an injection, honestly.", time: 102000 },
+  { speaker: 'Clinician', text: "Many patients feel that way. And if we do move to a GLP-1 later, the injections are actually quite simple — small needle, once a week. But we can cross that bridge when we get there.", time: 106000 },
+  { speaker: 'Patient', text: "Right. One step at a time. And you said after three months we'd check in?", time: 112000 },
+  { speaker: 'Clinician', text: "Exactly. We'll schedule a follow-up at the three-month mark. By then we'll have data on how you're responding, and that documentation also helps if we need to make a case to your insurance for a GLP-1 down the line.", time: 116500 },
+  { speaker: 'Patient', text: "That makes sense. I like having a plan instead of just waiting around.", time: 123000 },
+  { speaker: 'Clinician', text: "Absolutely. Let me just finish reviewing the details here and then we'll get your prescription set up.", time: 127000 },
+  { speaker: 'Patient', text: "Sounds good. Thank you for explaining all of this — I feel a lot better about the process now.", time: 132000 },
+  { speaker: 'Clinician', text: "Of course. That's what I'm here for. We're going to get you started on the right track.", time: 137000 },
+];
+
+const DEMO_WHILE_REVIEWING = [
+  "While I'm looking at this, can you remind me — are you taking any other supplements besides the vitamin D?",
+  "Good. And you mentioned you've been exercising — what does that look like for you right now?",
+  "That's helpful. Any medications or supplements I should know about?",
+  "Let me just pull up your formulary here… One moment."
+];
+
+const HARDCODED_SCRIPT = `"The medication we discussed — semaglutide — is still a good option for you clinically. However, your insurance plan requires us to try another medication first and get extra approval, which could take a few weeks.\n\nOne option is to start with generic phentermine for the next three months. This lets you begin treatment right away, and it may also improve our chances of getting semaglutide approved later if we still need it.\n\nLet me walk you through both options so we can choose the best next step for you."`;
+
+const HARDCODED_POINTS = [
+  'PA + step therapy would delay semaglutide by weeks',
+  'Phentermine can start within days at much lower cost',
+  '3-month trial builds case for future GLP-1 approval',
+  "We'll revisit semaglutide at follow-up"
+];
+
+const MED_KEYWORDS = ['semaglutide', 'wegovy', 'ozempic', 'tirzepatide', 'mounjaro', 'phentermine'];
+
+/* ═══════════════════════════════════════
+   FORMULARY DATABASE
+   Based on publicly available formulary structures from major PBMs.
+   Modeled on Aetna 2025–2026 commercial PPO preferred drug list.
+   ═══════════════════════════════════════ */
+
+const PATIENT_PROFILE = {
+  name: 'Sarah Chen',
+  age: 38,
+  sex: 'F',
+  bmi: 34.2,
+  conditions: ['Obesity (BMI ≥ 30)', 'Pre-diabetes (A1c 6.1%)', 'Hypertension (controlled)'],
+  currentMeds: ['Lisinopril 10mg daily', 'Vitamin D3 2000 IU', 'Multivitamin'],
+  plan: {
+    name: 'Aetna Choice POS II (PPO)',
+    pbm: 'CVS Caremark',
+    planId: 'AETNA-PPO-2026-0412',
+    effectiveDate: '2026-01-01',
+    deductible: 1500,
+    deductibleMet: 820,
+    oopMax: 5000,
+    tiers: {
+      1: { label: 'Preferred Generic', copay: '$10', coinsurance: null },
+      2: { label: 'Non-Preferred Generic', copay: '$25', coinsurance: null },
+      3: { label: 'Preferred Brand', copay: null, coinsurance: '25%' },
+      4: { label: 'Non-Preferred Brand', copay: null, coinsurance: '40%' },
+      5: { label: 'Specialty', copay: null, coinsurance: '30% (max $250/fill)' }
+    }
+  }
+};
+
+const FORMULARY_DB = {
+  semaglutide_wegovy: {
+    brandName: 'Wegovy',
+    genericName: 'Semaglutide',
+    manufacturer: 'Novo Nordisk',
+    ndc: '00169-4100-12',
+    route: 'Subcutaneous injection',
+    doseForms: ['0.25mg/0.5mL', '0.5mg/0.5mL', '1mg/0.5mL', '1.7mg/0.75mL', '2.4mg/0.75mL'],
+    indication: 'Chronic weight management (BMI ≥ 30, or ≥ 27 with comorbidity)',
+    fdaApproved: true,
+    formularyStatus: 'Non-Preferred Brand',
+    tier: 4,
+    priorAuth: {
+      required: true,
+      criteria: [
+        'BMI ≥ 30 kg/m² OR BMI ≥ 27 with ≥ 1 weight-related comorbidity',
+        'Documentation of ≥ 6 months lifestyle modification (diet + exercise)',
+        'Must have tried and failed or be intolerant to ≥ 1 formulary-preferred agent (step therapy)',
+        'Prescriber must be MD/DO or supervised NP/PA',
+        'Initial auth: 6 months; renewal requires ≥ 5% weight loss from baseline'
+      ],
+      turnaround: '5–10 business days',
+      approvalRate: '62%',
+      renewalCriteria: '≥ 5% body weight reduction at 6-month review'
+    },
+    stepTherapy: {
+      required: true,
+      stepsNeeded: ['Must trial ≥ 1 preferred agent for ≥ 90 days'],
+      preferredFirstLine: ['Phentermine', 'Phentermine/Topiramate ER'],
+      documentation: 'Chart notes showing trial dates, dose, response, and reason for discontinuation'
+    },
+    quantityLimits: { perFill: '4 pens (28-day supply)', fillsPerYear: 12 },
+    estimatedCost: {
+      withoutInsurance: '$1,349.02/month',
+      withInsurance_beforeDeductible: '$539.61 (40% coinsurance)',
+      withInsurance_afterDeductible: '$539.61 (40% coinsurance)',
+      manufacturerCoupon: 'Novo Nordisk savings card: may reduce to $0–$25/month for commercially insured (income limits apply)'
+    },
+    clinicalNotes: 'GLP-1 receptor agonist. Weekly injection. Titration over 16–20 weeks to maintenance dose of 2.4mg.',
+    alternatives: ['phentermine_generic', 'phentermine_topiramate', 'liraglutide_saxenda', 'orlistat_generic', 'naltrexone_bupropion']
+  },
+
+  semaglutide_ozempic: {
+    brandName: 'Ozempic',
+    genericName: 'Semaglutide',
+    manufacturer: 'Novo Nordisk',
+    ndc: '00169-4130-12',
+    route: 'Subcutaneous injection',
+    doseForms: ['0.25mg/dose', '0.5mg/dose', '1mg/dose', '2mg/dose'],
+    indication: 'Type 2 diabetes mellitus (NOT approved for weight management)',
+    fdaApproved: true,
+    formularyStatus: 'Preferred Specialty',
+    tier: 5,
+    priorAuth: {
+      required: true,
+      criteria: [
+        'Confirmed diagnosis of Type 2 diabetes',
+        'A1c ≥ 7.0% on current therapy OR intolerance to metformin',
+        'NOT covered for weight management indication'
+      ],
+      turnaround: '3–5 business days',
+      approvalRate: '78% (for T2D indication)',
+      renewalCriteria: 'Continued T2D diagnosis'
+    },
+    stepTherapy: { required: true, stepsNeeded: ['Trial of metformin unless contraindicated'] },
+    quantityLimits: { perFill: '1 pen (28-day supply)', fillsPerYear: 12 },
+    estimatedCost: {
+      withoutInsurance: '$935.77/month',
+      withInsurance_afterDeductible: '$250/fill (specialty copay cap)',
+      manufacturerCoupon: 'Available for eligible commercially insured patients'
+    },
+    clinicalNotes: 'Same molecule as Wegovy but approved only for T2D. Off-label use for weight loss would NOT be covered.',
+    offLabelWarning: 'Payer will deny claims coded for obesity/weight management'
+  },
+
+  tirzepatide_mounjaro: {
+    brandName: 'Mounjaro',
+    genericName: 'Tirzepatide',
+    manufacturer: 'Eli Lilly',
+    ndc: '00002-1506-80',
+    route: 'Subcutaneous injection',
+    doseForms: ['2.5mg/0.5mL', '5mg/0.5mL', '7.5mg/0.5mL', '10mg/0.5mL', '12.5mg/0.5mL', '15mg/0.5mL'],
+    indication: 'Type 2 diabetes mellitus',
+    fdaApprovedForObesity: false,
+    fdaApprovedForT2D: true,
+    formularyStatus: 'Non-Formulary (for obesity)',
+    tier: null,
+    priorAuth: {
+      required: true,
+      criteria: [
+        'NOT covered under current formulary for weight management',
+        'Covered ONLY for T2D diagnosis with A1c documentation',
+        'For T2D: must have failed metformin + 1 other oral agent'
+      ],
+      turnaround: 'N/A for obesity indication (auto-deny)',
+      approvalRate: '0% for obesity; 71% for T2D',
+      autoRejectReasons: ['No FDA approval for obesity indication under this plan', 'Formulary exclusion for weight management use']
+    },
+    stepTherapy: { required: false, notes: 'N/A — drug is excluded for this indication' },
+    quantityLimits: null,
+    estimatedCost: {
+      withoutInsurance: '$1,023.04/month',
+      withInsurance: 'Not covered (full cash price applies)',
+      manufacturerCoupon: 'Lilly savings card: may reduce to ~$25/month IF active Rx exists (commercially insured only)'
+    },
+    clinicalNotes: 'Dual GIP/GLP-1 receptor agonist. Strong weight loss data from SURMOUNT trials. FDA filing for obesity indication (Zepbound) is separate product.',
+    relatedProduct: 'Zepbound (tirzepatide for obesity) — see separate entry',
+    alternatives: ['semaglutide_wegovy', 'liraglutide_saxenda']
+  },
+
+  tirzepatide_zepbound: {
+    brandName: 'Zepbound',
+    genericName: 'Tirzepatide',
+    manufacturer: 'Eli Lilly',
+    ndc: '00002-2360-80',
+    route: 'Subcutaneous injection',
+    doseForms: ['2.5mg/0.5mL', '5mg/0.5mL', '10mg/0.5mL', '15mg/0.5mL'],
+    indication: 'Chronic weight management',
+    fdaApproved: true,
+    formularyStatus: 'Non-Formulary',
+    tier: null,
+    priorAuth: {
+      required: false,
+      criteria: ['Excluded from formulary — no PA pathway available'],
+      turnaround: 'N/A',
+      approvalRate: '0%',
+      exclusionReason: 'Formulary exclusion effective 2026-01-01. Payer classifies as "investigational" for cost management.'
+    },
+    estimatedCost: {
+      withoutInsurance: '$1,059.87/month',
+      withInsurance: 'Not covered',
+      manufacturerCoupon: 'Lilly savings card available'
+    },
+    clinicalNotes: 'Same molecule as Mounjaro, FDA-approved for obesity. Formulary exclusion is payer decision, not clinical.',
+    alternatives: ['semaglutide_wegovy', 'phentermine_generic']
+  },
+
+  phentermine_generic: {
+    brandName: 'Adipex-P (or generic)',
+    genericName: 'Phentermine HCl',
+    manufacturer: 'Various (Teva, Prasco, KVK-Tech)',
+    ndc: '57844-0010-01',
+    route: 'Oral tablet/capsule',
+    doseForms: ['15mg capsule', '37.5mg tablet', '37.5mg capsule'],
+    indication: 'Short-term adjunct for weight management (BMI ≥ 30, or ≥ 27 with comorbidity)',
+    fdaApproved: true,
+    formularyStatus: 'Preferred Generic',
+    tier: 1,
+    priorAuth: { required: false },
+    stepTherapy: { required: false, notes: 'This IS the preferred first-line agent for step therapy compliance' },
+    quantityLimits: { perFill: '30 tablets (30-day supply)', fillsPerYear: 12, maxDuration: '12 weeks per FDA label; plan allows up to 6 months with clinician documentation' },
+    estimatedCost: {
+      withoutInsurance: '$15–$45/month',
+      withInsurance: '$10 copay (Tier 1)',
+      manufacturerCoupon: 'Not needed — generic pricing'
+    },
+    clinicalNotes: 'Sympathomimetic amine. Schedule IV controlled substance. Contraindicated with uncontrolled HTN, MAOIs, or history of CVD. Monitor BP and heart rate. FDA label says short-term (few weeks) but clinical practice extends to 3–6 months.',
+    contraindications: ['Uncontrolled hypertension', 'History of cardiovascular disease', 'Hyperthyroidism', 'Glaucoma', 'MAOI use within 14 days'],
+    monitoringRequired: ['Blood pressure at baseline, 4 weeks, 12 weeks', 'Heart rate', 'Sleep quality assessment'],
+    strategicValue: 'Completing a 90-day trial satisfies step therapy requirement for GLP-1 PA submission'
+  },
+
+  phentermine_topiramate: {
+    brandName: 'Qsymia',
+    genericName: 'Phentermine/Topiramate ER',
+    manufacturer: 'Vivus (now Currax)',
+    ndc: '62541-0321-30',
+    route: 'Oral capsule',
+    doseForms: ['3.75/23mg', '7.5/46mg', '11.25/69mg', '15/92mg'],
+    indication: 'Chronic weight management',
+    fdaApproved: true,
+    formularyStatus: 'Preferred Brand',
+    tier: 3,
+    priorAuth: { required: false },
+    stepTherapy: { required: false },
+    quantityLimits: { perFill: '30 capsules (30-day supply)' },
+    estimatedCost: {
+      withoutInsurance: '$198–$225/month',
+      withInsurance: '25% coinsurance (~$50–$56)',
+      manufacturerCoupon: 'Savings card available: may reduce to $15/month'
+    },
+    clinicalNotes: 'Combination product. REMS program required (pregnancy risk — topiramate is teratogenic). Must use certified pharmacy. Monthly pregnancy tests required for females of reproductive age.',
+    contraindications: ['Pregnancy', 'Glaucoma', 'Hyperthyroidism', 'MAOI use'],
+    specialPrograms: 'REMS: must enroll in Qsymia certified pharmacy program'
+  },
+
+  liraglutide_saxenda: {
+    brandName: 'Saxenda',
+    genericName: 'Liraglutide',
+    manufacturer: 'Novo Nordisk',
+    ndc: '00169-3650-12',
+    route: 'Subcutaneous injection',
+    doseForms: ['6mg/mL pen (3mL)'],
+    indication: 'Chronic weight management',
+    fdaApproved: true,
+    formularyStatus: 'Non-Preferred Brand',
+    tier: 4,
+    priorAuth: {
+      required: true,
+      criteria: [
+        'BMI ≥ 30 or ≥ 27 with comorbidity',
+        'Failed ≥ 1 preferred agent (step therapy)',
+        'Documentation of lifestyle modification'
+      ],
+      turnaround: '5–7 business days',
+      approvalRate: '74%',
+    },
+    stepTherapy: { required: true, stepsNeeded: ['Must trial preferred agent first'] },
+    estimatedCost: {
+      withoutInsurance: '$1,349.02/month',
+      withInsurance_afterDeductible: '$539.61 (40% coinsurance)',
+      manufacturerCoupon: 'Savings card: may reduce copay'
+    },
+    clinicalNotes: 'GLP-1 receptor agonist. Daily injection (vs. weekly for semaglutide). Higher historical PA approval rate than Wegovy due to longer market availability.'
+  },
+
+  orlistat_generic: {
+    brandName: 'Xenical (or generic orlistat)',
+    genericName: 'Orlistat',
+    manufacturer: 'Various',
+    route: 'Oral capsule',
+    doseForms: ['120mg capsule (Rx)', '60mg capsule (OTC as Alli)'],
+    indication: 'Weight management',
+    fdaApproved: true,
+    formularyStatus: 'Preferred Generic',
+    tier: 1,
+    priorAuth: { required: false },
+    stepTherapy: { required: false },
+    estimatedCost: {
+      withoutInsurance: '$50–$80/month',
+      withInsurance: '$10 copay (Tier 1)'
+    },
+    clinicalNotes: 'Lipase inhibitor. Modest weight loss (3–5% beyond placebo). GI side effects common (steatorrhea). OTC version (Alli 60mg) available without Rx.'
+  },
+
+  naltrexone_bupropion: {
+    brandName: 'Contrave',
+    genericName: 'Naltrexone/Bupropion ER',
+    manufacturer: 'Currax Pharmaceuticals',
+    route: 'Oral tablet',
+    doseForms: ['8/90mg tablets'],
+    indication: 'Chronic weight management',
+    fdaApproved: true,
+    formularyStatus: 'Preferred Brand',
+    tier: 3,
+    priorAuth: { required: false },
+    stepTherapy: { required: false },
+    estimatedCost: {
+      withoutInsurance: '$300–$350/month',
+      withInsurance: '25% coinsurance (~$75–$88)'
+    },
+    clinicalNotes: 'Combination opioid antagonist + aminoketone antidepressant. Contraindicated with opioid use, seizure disorders, uncontrolled HTN. No controlled substance scheduling.'
+  },
+
+  metformin_generic: {
+    brandName: 'Glucophage (or generic)',
+    genericName: 'Metformin HCl',
+    manufacturer: 'Various',
+    route: 'Oral tablet',
+    doseForms: ['500mg', '850mg', '1000mg', '500mg ER', '750mg ER'],
+    indication: 'Type 2 diabetes (off-label: weight management, PCOS)',
+    fdaApproved: true,
+    formularyStatus: 'Preferred Generic',
+    tier: 1,
+    priorAuth: { required: false },
+    estimatedCost: {
+      withoutInsurance: '$4–$15/month',
+      withInsurance: '$10 copay (Tier 1)'
+    },
+    clinicalNotes: 'First-line for T2D. Modest weight-neutral to slight weight loss effect. Not FDA-approved for weight management but sometimes used off-label. Would not satisfy obesity step therapy requirements.'
+  }
+};
+
+function lookupFormulary(medKeyword) {
+  const key = medKeyword.toLowerCase();
+  const mapping = {
+    semaglutide: 'semaglutide_wegovy',
+    wegovy: 'semaglutide_wegovy',
+    ozempic: 'semaglutide_ozempic',
+    tirzepatide: 'tirzepatide_mounjaro',
+    mounjaro: 'tirzepatide_mounjaro',
+    zepbound: 'tirzepatide_zepbound',
+    phentermine: 'phentermine_generic',
+    qsymia: 'phentermine_topiramate',
+    saxenda: 'semaglutide_wegovy',
+    liraglutide: 'liraglutide_saxenda',
+    orlistat: 'orlistat_generic',
+    xenical: 'orlistat_generic',
+    contrave: 'naltrexone_bupropion',
+    metformin: 'metformin_generic'
+  };
+  const dbKey = mapping[key];
+  return dbKey ? FORMULARY_DB[dbKey] : null;
+}
+
+function getFormularyContext(medKey) {
+  const drug = FORMULARY_DB[medKey];
+  if (!drug) return '';
+  let ctx = `\n--- FORMULARY RECORD: ${drug.brandName} (${drug.genericName}) ---\n`;
+  ctx += `Manufacturer: ${drug.manufacturer}\n`;
+  ctx += `Route: ${drug.route}\n`;
+  ctx += `Indication: ${drug.indication}\n`;
+  ctx += `Formulary Status: ${drug.formularyStatus} (Tier ${drug.tier || 'N/A'})\n`;
+  if (drug.priorAuth) {
+    ctx += `Prior Authorization: ${drug.priorAuth.required ? 'REQUIRED' : 'Not required'}\n`;
+    if (drug.priorAuth.criteria) ctx += `  Criteria: ${drug.priorAuth.criteria.join('; ')}\n`;
+    if (drug.priorAuth.turnaround) ctx += `  Turnaround: ${drug.priorAuth.turnaround}\n`;
+    if (drug.priorAuth.approvalRate) ctx += `  Historical Approval Rate: ${drug.priorAuth.approvalRate}\n`;
+  }
+  if (drug.stepTherapy?.required) {
+    ctx += `Step Therapy: REQUIRED — ${drug.stepTherapy.stepsNeeded?.join('; ') || ''}\n`;
+    if (drug.stepTherapy.preferredFirstLine) ctx += `  Preferred first-line: ${drug.stepTherapy.preferredFirstLine.join(', ')}\n`;
+  }
+  if (drug.estimatedCost) {
+    ctx += `Cost without insurance: ${drug.estimatedCost.withoutInsurance}\n`;
+    const insured = drug.estimatedCost.withInsurance || drug.estimatedCost.withInsurance_afterDeductible;
+    if (insured) ctx += `Cost with insurance: ${insured}\n`;
+    if (drug.estimatedCost.manufacturerCoupon) ctx += `Savings program: ${drug.estimatedCost.manufacturerCoupon}\n`;
+  }
+  if (drug.clinicalNotes) ctx += `Clinical notes: ${drug.clinicalNotes}\n`;
+  if (drug.strategicValue) ctx += `Strategic value: ${drug.strategicValue}\n`;
+  return ctx;
+}
+
+function getPatientContext() {
+  const p = PATIENT_PROFILE;
+  let ctx = `${p.name}, ${p.age}${p.sex}, BMI ${p.bmi}\n`;
+  ctx += `Conditions: ${p.conditions.join(', ')}\n`;
+  ctx += `Current meds: ${p.currentMeds.join(', ')}\n`;
+  ctx += `Plan: ${p.plan.name} (PBM: ${p.plan.pbm})\n`;
+  ctx += `Deductible: $${p.plan.deductible} ($${p.plan.deductibleMet} met)\n`;
+  ctx += `Tier structure: ${Object.entries(p.plan.tiers).map(([k,v]) => `T${k}: ${v.label} = ${v.copay || v.coinsurance}`).join(' | ')}\n`;
+  return ctx;
+}
+
+/* ═══════════════════════════════════════
+   1. MODE SELECTOR
+   ═══════════════════════════════════════ */
+
+function setMode(mode) {
+  demoMode = mode;
+  document.getElementById('modeScripted').classList.toggle('active', mode === 'scripted');
+  document.getElementById('modeLive').classList.toggle('active', mode === 'live');
+
+  const startBtn = document.getElementById('demoStart');
+  const ffBtn = document.getElementById('demoFF');
+  const label = document.getElementById('demoStepLabel');
+
+  if (mode === 'live') {
+    startBtn.innerHTML = '🎙 Start Live';
+    ffBtn.style.display = 'none';
+    label.textContent = 'Click Start Live — you speak, AI replies in text only';
+  } else {
+    startBtn.innerHTML = '▶ Start Demo';
+    label.textContent = 'Click Start to begin — conversation auto-plays';
+  }
+
+  if (demoRunning) resetDemo();
+}
+
+/* ═══════════════════════════════════════
+   2. WEB SPEECH API
+   ═══════════════════════════════════════ */
+
+// Holds a live MediaStream so Chrome doesn't re-prompt for mic permission within the session
+let _micStream = null;
+
+function startLiveTranscript() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    showToast('⚠️', 'Speech API not supported — falling back to scripted mode');
+    setMode('scripted');
+    startScriptedDemo();
+    return;
+  }
+
+  conversationHistory = [];
+  pendingPatientBuffer = [];
+  isGeneratingClinicianResponse = false;
+
+  // Pre-acquire mic via getUserMedia and hold the stream alive.
+  // Chrome reuses this active grant for SpeechRecognition, avoiding repeated prompts on file:// URLs.
+  const initRecognition = () => {
+    if (!recognition) {
+      recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.maxAlternatives = 3;
+      recognition.lang = 'en-US';
+
+      recognition.onresult = function(event) {
+        let interim = '';
+        let finalChunk = '';
+        const medPat = /wegovy|semaglutide|tirzepatide|mounjaro|zepbound|phentermine|ozempic/i;
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          if (event.results[i].isFinal) {
+            // Pick whichever alternative contains a drug name; fall back to best guess
+            let best = event.results[i][0].transcript;
+            if (!medPat.test(best)) {
+              for (let j = 1; j < event.results[i].length; j++) {
+                if (medPat.test(event.results[i][j].transcript)) {
+                  best = event.results[i][j].transcript;
+                  break;
+                }
+              }
+            }
+            finalChunk += correctDrugNames(best);
+          } else {
+            interim += event.results[i][0].transcript;
+          }
+        }
+        if (finalChunk && !liveMuted) {
+          const patientText = finalChunk.trim();
+          appendLiveTranscriptLine('Patient', patientText, false);
+          scanForMedications(patientText);
+          pendingPatientBuffer.push(patientText);
+          maybeProcessPatientBuffer();
+        }
+        updateLiveInterim(liveMuted ? '' : interim);
+      };
+
+      recognition.onerror = function(event) {
+        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+          showToast('🎙', 'Microphone denied — switching to scripted mode');
+          setMode('scripted');
+          startScriptedDemo();
+          return;
+        }
+        if (['no-speech', 'aborted', 'audio-capture', 'network'].includes(event.error)) return;
+        console.warn('Speech recognition error:', event.error);
+      };
+
+      recognition.onend = function() {
+        // Debounce restart — prevents Chrome from treating rapid cycles as new permission requests
+        if (demoRunning && demoMode === 'live') {
+          setTimeout(() => {
+            if (demoRunning && demoMode === 'live' && recognition) {
+              try { recognition.start(); } catch(e) {}
+            }
+          }, 300);
+        }
+      };
+    }
+
+    const liveContainer = document.getElementById('liveTranscriptLines');
+    const scriptedContainer = document.getElementById('transcriptLines');
+    liveContainer.style.display = 'block';
+    scriptedContainer.style.display = 'none';
+    document.getElementById('micLiveIndicator').classList.add('active');
+    document.getElementById('listeningLabel').textContent = 'You are the patient — AI is the clinician';
+    document.getElementById('listeningSublabel').textContent = 'You speak, AI replies with text only. Mention a medication (e.g. semaglutide, Wegovy, phentermine) to trigger the assessment.';
+
+    try {
+      recognition.start();
+    } catch(e) {
+      if (!e.message || !e.message.includes('already started')) {
+        showToast('⚠️', 'Could not start microphone — falling back to scripted');
+        setMode('scripted');
+        startScriptedDemo();
+        return;
+      }
+    }
+
+    sched(generateClinicianOpener, 1500);
+  };
+
+  // If we already have a live stream, skip getUserMedia and go straight to recognition
+  if (_micStream && _micStream.active) {
+    initRecognition();
+    return;
+  }
+
+  // First time (or after full reset): pre-aquire mic, hold stream, then start recognition
+  navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+    .then(stream => {
+      _micStream = stream; // keep stream alive — Chrome won't re-prompt while this is active
+      initRecognition();
+    })
+    .catch(err => {
+      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+        showToast('🎙', 'Microphone denied — switching to scripted mode');
+        setMode('scripted');
+        startScriptedDemo();
+      } else {
+        // getUserMedia not available (e.g. very old browser) — try recognition directly
+        initRecognition();
+      }
+    });
+}
+
+// Queue to ensure clinician bubbles type one at a time
+let clinicianTypingQueue = [];
+let isTypingClinician = false;
+
+function drainClinicianQueue() {
+  if (isTypingClinician || clinicianTypingQueue.length === 0) return;
+  isTypingClinician = true;
+  const { createBubble, text, onProgress, afterDone } = clinicianTypingQueue.shift();
+
+  // Create and insert the bubble NOW so only the active bubble is visible
+  const { bubble, textEl } = createBubble();
+
+  const words = text.split(/(\s+)/);
+  let i = 0;
+  function typeNext() {
+    if (i >= words.length) {
+      textEl.innerHTML = highlightMedications(textEl.textContent);
+      const cb = document.getElementById('demoConversationBody');
+      if (cb) cb.scrollTop = cb.scrollHeight;
+      if (afterDone) afterDone();
+      isTypingClinician = false;
+      drainClinicianQueue();
+      return;
+    }
+    textEl.textContent += words[i];
+    i++;
+    if (onProgress) onProgress(textEl.textContent);
+    const t = setTimeout(typeNext, 25 + Math.random() * 20);
+    timeouts.push(t);
+  }
+  typeNext();
+}
+
+function typeIntoDemoBubble(textEl, text, onDone, onProgress) {
+  if (!text || !textEl) { if (onDone) onDone(); return; }
+  const words = text.split(/(\s+)/);
+  let i = 0;
+  function typeNext() {
+    if (i >= words.length) { if (onDone) onDone(); return; }
+    textEl.textContent += words[i];
+    i++;
+    if (onProgress) onProgress(textEl.textContent);
+    const t = setTimeout(typeNext, 25 + Math.random() * 20);
+    timeouts.push(t);
+  }
+  typeNext();
+}
+
+function appendToDemoConversation(speaker, text, isEvaluating, opts) {
+  opts = opts || {};
+  const container = document.getElementById('demoConversationBody');
+  if (!container) return;
+  const msg = isEvaluating ? 'Reviewing your insurance options…' : text;
+
+  if (speaker === 'Patient' || isEvaluating) {
+    // Patient / evaluating bubbles: create and append immediately
+    const bubble = document.createElement('div');
+    bubble.className = 'demo-conv-bubble ' + (isEvaluating ? 'evaluating' : 'patient');
+    const label = isEvaluating ? 'Dr. Martinez (Clinician)' : 'Sarah (Patient)';
+    bubble.innerHTML = '<div class="demo-conv-speaker">' + label + '</div><div class="demo-conv-text"></div>';
+    container.appendChild(bubble);
+    const textEl = bubble.querySelector('.demo-conv-text');
+    textEl.innerHTML = highlightMedications(msg);
+    const cb = document.getElementById('demoConversationBody');
+    if (cb) cb.scrollTop = cb.scrollHeight;
+    // In live mode only, trigger reviewing lines after patient speaks
+    if (speaker === 'Patient' && demoMode === 'live') sched(() => showNextReviewingLineAfterPatient(), 800);
+  } else {
+    // Clinician bubble — defer DOM creation until this item reaches the front of the queue.
+    // Do NOT pre-create/append a bubble here; createBubble is the sole DOM insertion point.
+    const trig = opts.triggerEvalOnWegovyTyped;
+    const medWords = /wegovy|semaglutide|tirzepatide|mounjaro|zepbound|phentermine|ozempic/i;
+    let triggered = false;
+    const onProgress = trig ? function (currentText) {
+      if (!triggered && medWords.test(currentText)) {
+        triggered = true;
+        trig();
+      }
+    } : undefined;
+
+    const insertBefore = opts._insertBefore || null;
+    clinicianTypingQueue.push({
+      createBubble: () => {
+        const c = document.getElementById('demoConversationBody');
+        const b = document.createElement('div');
+        b.className = 'demo-conv-bubble clinician';
+        b.innerHTML = '<div class="demo-conv-speaker">Dr. Martinez (Clinician)</div><div class="demo-conv-text"></div>';
+        if (insertBefore && insertBefore.parentNode === c) {
+          c.insertBefore(b, insertBefore);
+        } else {
+          c.appendChild(b);
+        }
+        return { bubble: b, textEl: b.querySelector('.demo-conv-text') };
+      },
+      text: msg,
+      onProgress,
+      afterDone: () => {
+        if (opts.onDone) opts.onDone();
+        if (trig && !triggered && medWords.test(msg)) trig();
+      }
+    });
+    drainClinicianQueue();
+  }
+}
+
+function escapeHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function highlightMedications(text) {
+  let out = escapeHtml(text);
+  MED_KEYWORDS.forEach(kw => {
+    const regex = new RegExp('(' + kw + ')', 'gi');
+    out = out.replace(regex, '<span class="transcript-highlight">$1</span>');
+  });
+  return out;
+}
+
+function updateDemoConversationEvaluating(show) {
+  demoConvReviewingTimeouts.forEach(t => clearTimeout(t));
+  demoConvReviewingTimeouts = [];
+  demoConvReviewingIndex = 0;
+  // DEMO_WHILE_REVIEWING lines are scripted fallbacks only — never used in live mode
+  // where the AI generates real clinician responses for every turn.
+  if (demoMode === 'live') return;
+  let el = document.getElementById('demoConvEvaluating');
+  if (show && !el) {
+    const marker = document.createElement('div');
+    marker.id = 'demoConvEvaluating';
+    marker.style.display = 'none';
+    document.getElementById('demoConversationBody').appendChild(marker);
+    const t = setTimeout(() => scheduleNextReviewingLine(0), 6000);
+    demoConvReviewingTimeouts.push(t);
+  } else if (!show && el) {
+    el.remove();
+  }
+}
+
+function scheduleNextReviewingLine(index) {
+  // Only used in scripted mode — live mode uses AI-generated responses instead
+  if (demoMode !== 'scripted') return;
+  if (index >= DEMO_WHILE_REVIEWING.length || !document.getElementById('demoConvEvaluating')) return;
+  demoConvReviewingIndex = index + 1;
+  const line = DEMO_WHILE_REVIEWING[index];
+  // Defer bubble creation into the queue so no empty box appears while waiting
+  clinicianTypingQueue.push({
+    createBubble: () => {
+      const container = document.getElementById('demoConversationBody');
+      const evaluating = document.getElementById('demoConvEvaluating');
+      const b = document.createElement('div');
+      b.className = 'demo-conv-bubble clinician';
+      b.innerHTML = '<div class="demo-conv-speaker">Dr. Martinez (Clinician)</div><div class="demo-conv-text"></div>';
+      if (evaluating && evaluating.parentNode === container) container.insertBefore(b, evaluating);
+      else container.appendChild(b);
+      return { bubble: b, textEl: b.querySelector('.demo-conv-text') };
+    },
+    text: line,
+    onProgress: undefined,
+    afterDone: undefined
+  });
+  drainClinicianQueue();
+}
+
+function showNextReviewingLineAfterPatient() {
+  if (demoMode !== 'live' || !document.getElementById('demoConvEvaluating')) return;
+  if (demoConvReviewingIndex >= DEMO_WHILE_REVIEWING.length) return;
+  scheduleNextReviewingLine(demoConvReviewingIndex);
+}
+
+function appendLiveTranscriptLine(speaker, text, isAI, opts) {
+  opts = opts || {};
+  const container = document.getElementById('liveTranscriptLines');
+  const line = document.createElement('div');
+  line.className = 'transcript-line visible' + (isAI ? ' ai-clinician' : '');
+
+  let highlighted = text;
+  MED_KEYWORDS.forEach(kw => {
+    const regex = new RegExp('(' + kw + ')', 'gi');
+    highlighted = highlighted.replace(regex, '<span class="transcript-highlight">$1</span>');
+  });
+
+  line.innerHTML = '<span class="speaker">' + (speaker || 'Live') + '</span><br>' + highlighted;
+  container.appendChild(line);
+  line.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+  const demoOpts = {
+    ...(opts.onWegovyTyped ? { triggerEvalOnWegovyTyped: opts.onWegovyTyped } : {}),
+    ...(opts.onDone       ? { onDone: opts.onDone }                          : {})
+  };
+  appendToDemoConversation(speaker, text, false, demoOpts);
+
+  if (currentActiveView !== 'viewListening') {
+    setTickerLine(line.innerHTML);
+  }
+}
+
+function updateLiveInterim(text) {
+  let interim = document.getElementById('liveInterim');
+  if (!interim) {
+    interim = document.createElement('div');
+    interim.id = 'liveInterim';
+    interim.className = 'transcript-line visible';
+    interim.style.opacity = '0.5';
+    interim.style.fontStyle = 'italic';
+    document.getElementById('liveTranscriptLines').appendChild(interim);
+  }
+  if (text) {
+    interim.innerHTML = '<span class="speaker">…</span><br>' + text;
+    interim.style.display = '';
+  } else {
+    interim.style.display = 'none';
+  }
+}
+
+// ─── Phonetic corrections for drug names Chrome's speech API commonly mishears ───
+const DRUG_CORRECTIONS = [
+  // Tirzepatide (Mounjaro / Zepbound)
+  { from: /\b(appetite|tirzepetide|terzapetide|tirza\s*patite|tursa\s*pe?ptide|terza\s*pe?ptide|terze\s*pe?ptide|tirzapetide|turza\s*pa?tide|tirzepa\s*tide|tier\s*z[ae]\s*pa?tide|tirzep[ae]tide|tier\s*ze\s*pa?tite|tersepeptide|terzepeptide)\b/gi, to: 'tirzepatide' },
+  // Semaglutide (Wegovy / Ozempic)
+  { from: /\b(sema\s*glue\s*tied?|semoglutide|semagloutide|semaglu\s*tide|seema\s*gloot?ide|sema\s*glootide|semma\s*gloutide)\b/gi, to: 'semaglutide' },
+  // Wegovy
+  { from: /\b(we\s*go\s*v[ey]|wego\s*v[ey]|wegove|we\s*govy|whegoby|wegovey)\b/gi, to: 'Wegovy' },
+  // Ozempic
+  { from: /\b(oz?emp[ei]c?k?|oh\s*semp\s*ic|ozemp[ei]k|o\s*semp\s*ic)\b/gi, to: 'Ozempic' },
+  // Mounjaro
+  { from: /\b(mount\s*jaro|mountain\s*jar[or]o?w?|moun\s*jarro|moon\s*jar[or]o?)\b/gi, to: 'Mounjaro' },
+  // Phentermine
+  { from: /\b(fenter\s*mine|fenter\s*mean|fentur\s*mine|phen\s*ter\s*meen|phenter\s*mean|fender\s*mine)\b/gi, to: 'phentermine' },
+  // Zepbound
+  { from: /\b(zep\s*bound|zeb\s*bound|sep\s*bound)\b/gi, to: 'Zepbound' },
+];
+
+function correctDrugNames(text) {
+  let out = text;
+  DRUG_CORRECTIONS.forEach(({ from, to }) => { out = out.replace(from, to); });
+  return out;
+}
+
+function textMentionsMedication(text) {
+  const lower = text.toLowerCase();
+  return lower.includes('semaglutide') || lower.includes('wegovy') || lower.includes('ozempic') ||
+         lower.includes('tirzepatide') || lower.includes('mounjaro') || lower.includes('phentermine');
+}
+
+function scanForMedications(text) {
+  if (!textMentionsMedication(text)) return;
+  const lower = text.toLowerCase();
+
+  if (!liveMedDetected.semaglutide && (lower.includes('semaglutide') || lower.includes('wegovy') || lower.includes('ozempic') || lower.includes('phentermine'))) {
+    liveMedDetected.semaglutide = true;
+
+    // In Live mode, inject a natural bridging line so the doctor pauses to "check the tool"
+    // before the assessment panel appears — mirrors the Scripted demo's "Let me check your insurance" moment
+    if (demoMode === 'live') {
+      const bridgingLine = "Actually, hold on — let me just pull up your insurance coverage for that real quick…";
+      appendToDemoConversation('Clinician', bridgingLine, false, {});
+    }
+
+    setLabel('Medication mentioned — auto-evaluating access…');
+    setStatus('evaluating');
+    showView('viewDetection');
+    document.getElementById('transcriptTicker').classList.add('visible');
+    runEvalAnimation(() => {
+      setLabel('Assessment ready — auto-accepted');
+      setStatus('ready');
+      showView('viewAssessment');
+      // Auto-trigger accept so the full assessment launches immediately
+      if (!acceptTriggered) {
+        acceptTriggered = true;
+        sched(() => showToast('✓', 'Access assessment launched automatically'), 400);
+      }
+    });
+  }
+
+  if (!liveMedDetected.tirzepatide && (lower.includes('tirzepatide') || lower.includes('mounjaro'))) {
+    liveMedDetected.tirzepatide = true;
+    sched(() => {
+      document.getElementById('secondMedNotify').classList.add('show');
+      showToast('💊', 'New medication detected: Tirzepatide');
+      setLabel('Tirzepatide detected — tap notification to view assessment');
+    }, 500);
+  }
+}
+
+function stopLiveTranscript(fullReset) {
+  if (recognition) {
+    try { recognition.stop(); } catch(e) {}
+    if (fullReset) recognition = null;
+  }
+  if (fullReset && _micStream) {
+    // Release the mic track so the browser shows the mic icon as off
+    _micStream.getTracks().forEach(t => t.stop());
+    _micStream = null;
+  }
+  if (window.speechSynthesis) speechSynthesis.cancel();
+  ttsUtterance = null;
+  document.getElementById('micLiveIndicator').classList.remove('active');
+}
+
+function maybeProcessPatientBuffer() {
+  if (isGeneratingClinicianResponse || pendingPatientBuffer.length === 0) return;
+  const text = pendingPatientBuffer.shift();
+  generateClinicianResponse(text);
+}
+
+async function generateClinicianOpener() {
+  const endpoint = getAzureEndpoint();
+  const key = getAzureKey();
+  if (!demoRunning || demoMode !== 'live') return;
+
+  const container = document.getElementById('liveTranscriptLines');
+  const thinkingEl = document.createElement('div');
+  thinkingEl.className = 'ai-thinking-line';
+  thinkingEl.id = 'aiThinkingLine';
+  thinkingEl.innerHTML = '<div class="ai-thinking-dots"><span></span><span></span><span></span></div> Dr. Martinez is responding…';
+  container.appendChild(thinkingEl);
+  thinkingEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+  const systemPrompt = `You are Dr. Martinez, a clinician in a weight management visit. Sarah Chen (patient) is in the room. Open with a brief, warm greeting. Invite her to share her concerns or ask questions. Do NOT mention specific medications yet — wait for her to ask. Keep it short (1-2 sentences).`;
+  let reply = "Hi Sarah, thanks for coming in today. How can I help you today? What's on your mind about your weight management?";
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+    const resp = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'api-key': key },
+      body: JSON.stringify({
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: 'Start the visit. Greet the patient and invite her to ask questions.' }
+        ],
+        max_tokens: 150
+      }),
+      signal: controller.signal
+    });
+    clearTimeout(timeout);
+    const data = await resp.json();
+    if (data.choices && data.choices[0]?.message?.content) reply = data.choices[0].message.content.trim();
+    conversationHistory.push({ role: 'user', content: 'Start the visit.' });
+    conversationHistory.push({ role: 'assistant', content: reply });
+  } catch (e) {
+    conversationHistory.push({ role: 'user', content: 'Start the visit.' });
+    conversationHistory.push({ role: 'assistant', content: reply });
+  }
+
+  const thinking = document.getElementById('aiThinkingLine');
+  if (thinking) thinking.remove();
+  appendLiveTranscriptLine('Clinician', reply, true);
+  scanForMedications(reply);
+}
+
+async function generateClinicianResponse(patientText) {
+  if (isGeneratingClinicianResponse) return;
+  isGeneratingClinicianResponse = true;
+  const endpoint = getAzureEndpoint();
+  const key = getAzureKey();
+
+  conversationHistory.push({ role: 'user', content: patientText });
+
+  const container = document.getElementById('liveTranscriptLines');
+  const thinkingEl = document.createElement('div');
+  thinkingEl.className = 'ai-thinking-line';
+  thinkingEl.id = 'aiThinkingLine';
+  thinkingEl.innerHTML = '<div class="ai-thinking-dots"><span></span><span></span><span></span></div> Dr. Martinez is responding…';
+  container.appendChild(thinkingEl);
+  thinkingEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+  // Three-phase clinician persona keyed to the actual demo state:
+  // Phase 1 — No medication detected yet: pure clinical enthusiasm, zero formulary knowledge
+  // Phase 2 — Medication detected, Accept NOT yet pressed: still warm/enthusiastic, says "let me check" but reveals NO barriers
+  // Phase 3 — Accept pressed: full formulary context, explains phentermine path naturally
+  let systemPrompt;
+  if (!liveMedDetected.semaglutide) {
+    // PHASE 1: Doctor hasn't checked anything yet — purely clinical
+    systemPrompt = `You are Dr. Martinez, a clinician in a weight management visit with Sarah Chen (BMI 34.2, pre-diabetes).
+You have NOT yet checked any insurance or formulary systems — you are responding purely from clinical knowledge.
+When the patient asks about weight loss medication or GLP-1 treatments:
+  - Recommend Wegovy (semaglutide) as the best clinical option for her profile
+  - Mention it's a GLP-1 receptor agonist with impressive 15%+ weight loss data
+  - Express genuine enthusiasm — this is a great match for her
+  - Do NOT mention prior authorization, step therapy, insurance, cost, or access barriers
+  - 2-3 sentences, warm and confident
+For non-medication questions, answer naturally. Do NOT bring up medication unprompted.`;
+
+  } else if (!acceptTriggered) {
+    // PHASE 2: Tool has flagged a medication but doctor hasn't acted yet (Accept not pressed)
+    // Doctor is still in "checking" mode — enthusiastic but non-committal, no barriers revealed
+    systemPrompt = `You are Dr. Martinez in a weight management visit with Sarah Chen.
+Your access intelligence tool has surfaced some information, but you haven't shared details with the patient yet — you're still reviewing.
+When the patient asks about any GLP-1 medication (Wegovy, tirzepatide, Zepbound, Mounjaro, etc.):
+  - Acknowledge it warmly and positively as a great clinical option
+  - Say something like "That's a great question, let me just take a quick look at your coverage / check your chart here..."
+  - Convey that you're pausing to check something — curious, not alarmed
+  - Do NOT reveal any insurance findings, prior auth, step therapy, or access barriers yet
+  - Keep it brief: 1-2 sentences, conversational, unhurried
+For general questions (side effects, dosing, lifestyle), answer naturally without formulary detail.`;
+
+  } else {
+    // PHASE 3: Accept has been pressed — doctor has reviewed and committed to the recommendation
+    // Now explains the access situation and phentermine path clearly
+    const formularyCtx = getPatientContext() + '\n' + getFormularyContext('semaglutide_wegovy') + '\n' + getFormularyContext('phentermine_generic');
+    systemPrompt = `You are Dr. Martinez in a weight management visit with Sarah Chen.
+You just reviewed your access intelligence tool and pressed Accept on the recommendation. Here's what it found:
+  - Wegovy (and tirzepatide/Zepbound) both require prior authorization — 5–10 day turnaround, only ~62% approval
+  - Both also require step therapy: patient must try a preferred agent for 90 days first
+  - Phentermine (generic) is Tier 1, only $10 copay, no PA, starts immediately — and satisfies the step therapy requirement for both GLP-1s
+
+Explain this pivot to Sarah in a natural, reassuring way:
+  - Be honest that the insurance has a hurdle, but frame it as a practical workaround, not bad news
+  - Phentermine gets her started NOW, builds the documentation needed for GLP-1 approval later
+  - Keep the overall tone optimistic: "this is the smart path to get you where we want to go"
+  - 2-4 sentences, no jargon, conversational
+Use the formulary data below for any specific follow-up questions.\n\n${formularyCtx}`;
+  }
+
+  // Phase-aware fallbacks so even an offline demo feels natural
+  let reply;
+  if (!liveMedDetected.semaglutide) {
+    // Phase 1 — pure clinical, friendly, no formulary info
+    const p1Fallbacks = [
+      "I'm doing great, thanks for asking! So tell me—what's been on your mind lately with your weight management journey?",
+      "Doing well, thank you! Now, what brings you in today? I'd love to hear what's been on your mind.",
+      "Great to see you, Sarah! What questions or concerns can I help you with today?",
+    ];
+    reply = p1Fallbacks[conversationHistory.length % p1Fallbacks.length];
+  } else if (!acceptTriggered) {
+    // Phase 2 — medication flagged, still checking, warm and unhurried
+    reply = "That's a great question—let me just pull up your chart here and take a quick look at your options.";
+  } else {
+    // Phase 3 — post-accept, phentermine pivot
+    reply = "So here's the deal: your insurance needs a 90-day step-therapy first, but phentermine gets you started right now at just $10—and it's actually the fastest path to getting Wegovy approved down the line.";
+  }
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+    const resp = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'api-key': key },
+      body: JSON.stringify({
+        messages: [{ role: 'system', content: systemPrompt }, ...conversationHistory.map(m => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: m.content }))],
+        max_tokens: 150
+      }),
+      signal: controller.signal
+    });
+    clearTimeout(timeout);
+    const data = await resp.json();
+    if (data.choices && data.choices[0]?.message?.content) {
+      reply = data.choices[0].message.content.trim();
+      // Strip any speaker label the model may have hallucinated at the start (e.g. "Clinician ", "Dr. Martinez: ")
+      reply = reply.replace(/^(clinician|dr\.?\s*martinez|patient|sarah)[:\s–—]+/i, '');
+    }
+    conversationHistory.push({ role: 'assistant', content: reply });
+  } catch (e) {
+    conversationHistory.push({ role: 'assistant', content: reply });
+  }
+
+  const thinking = document.getElementById('aiThinkingLine');
+  if (thinking) thinking.remove();
+  appendLiveTranscriptLine('Clinician', reply, true, { onDone: () => scanForMedications(reply) });
+  isGeneratingClinicianResponse = false;
+  maybeProcessPatientBuffer();
+}
+
+function getPreferredVoice() {
+  const voices = speechSynthesis.getVoices();
+  if (!voices.length) return null;
+  const preferred = ['Google US English', 'Microsoft Zira', 'Samantha', 'Karen', 'Microsoft Aria', 'Alex', 'Victoria', 'Amelia'];
+  for (const p of preferred) {
+    const v = voices.find(x => x.name.toLowerCase().includes(p.toLowerCase()));
+    if (v) return v;
+  }
+  return voices.find(v => v.lang && v.lang.startsWith('en')) || voices[0];
+}
+
+function speakText(text) {
+  if (!text || !window.speechSynthesis) return;
+  if (recognition) {
+    try { recognition.stop(); } catch (e) {}
+  }
+  const u = new SpeechSynthesisUtterance(text);
+  const voice = getPreferredVoice();
+  if (voice) u.voice = voice;
+  u.rate = 0.9;
+  u.pitch = 1.05;
+  u.volume = 1;
+  ttsUtterance = u;
+  u.onend = u.onerror = function() {
+    ttsUtterance = null;
+    if (recognition && demoRunning && demoMode === 'live') {
+      setTimeout(function() {
+        try { recognition.start(); } catch (e) {}
+      }, 1200);
+    }
+  };
+  speechSynthesis.speak(u);
+}
+
+/* ═══════════════════════════════════════
+   3. SETTINGS PANEL (Azure AI config)
+   ═══════════════════════════════════════ */
+
+function openSettings() {
+  const overlay = document.getElementById('settingsOverlay');
+  overlay.classList.add('open');
+  document.getElementById('azureEndpoint').value = getAzureEndpoint();
+  document.getElementById('azureKey').value = getAzureKey();
+}
+
+function closeSettings() {
+  document.getElementById('settingsOverlay').classList.remove('open');
+  const status = document.getElementById('settingsStatus');
+  status.classList.remove('show');
+}
+
+function saveSettings() {
+  const endpoint = document.getElementById('azureEndpoint').value.trim();
+  const key = document.getElementById('azureKey').value.trim();
+  if (endpoint) localStorage.setItem('azure_endpoint', endpoint);
+  if (key) localStorage.setItem('azure_key', key);
+  const status = document.getElementById('settingsStatus');
+  status.textContent = '✓ Settings saved to browser storage';
+  status.style.color = 'var(--green-700)';
+  status.classList.add('show');
+  sched(() => status.classList.remove('show'), 3000);
+}
+
+async function testAzure() {
+  const endpoint = document.getElementById('azureEndpoint').value.trim() || getAzureEndpoint();
+  const key = document.getElementById('azureKey').value.trim() || getAzureKey();
+  const status = document.getElementById('settingsStatus');
+
+  status.textContent = '⏳ Testing connection…';
+  status.style.color = 'var(--blue-600)';
+  status.classList.add('show');
+
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+
+    const resp = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'api-key': key },
+      body: JSON.stringify({
+        messages: [{ role: 'user', content: 'Say "Connection successful" in exactly two words.' }],
+        max_tokens: 10
+      }),
+      signal: controller.signal
+    });
+
+    clearTimeout(timeout);
+
+    if (resp.ok) {
+      status.textContent = '✓ Connection successful! Azure AI is ready.';
+      status.style.color = 'var(--green-700)';
+    } else {
+      const err = await resp.text();
+      status.textContent = '✕ Error ' + resp.status + ': ' + (err.substring(0, 80));
+      status.style.color = 'var(--red-600)';
+    }
+  } catch(e) {
+    status.textContent = '✕ Connection failed: ' + (e.name === 'AbortError' ? 'Timeout (10s)' : e.message);
+    status.style.color = 'var(--red-600)';
+  }
+}
+
+/* ═══════════════════════════════════════
+   4. AZURE AI CALL — dynamic comm scripts
+   ═══════════════════════════════════════ */
+
+function buildPrompt(medication, alternative, barriers, patientContext) {
+  const medKey = medication.toLowerCase().includes('tirzepatide') ? 'tirzepatide_mounjaro' :
+                 medication.toLowerCase().includes('semaglutide') ? 'semaglutide_wegovy' : null;
+  const altKey = alternative.toLowerCase().includes('phentermine') ? 'phentermine_generic' :
+                 alternative.toLowerCase().includes('liraglutide') ? 'liraglutide_saxenda' : null;
+
+  let formularySection = '\n=== FORMULARY DATABASE RESULTS ===\n';
+  formularySection += getPatientContext();
+  if (medKey) formularySection += getFormularyContext(medKey);
+  if (altKey) formularySection += getFormularyContext(altKey);
+
+  const relatedDrugs = ['phentermine_topiramate', 'orlistat_generic', 'naltrexone_bupropion'];
+  formularySection += '\n--- OTHER FORMULARY OPTIONS (for reference) ---\n';
+  relatedDrugs.forEach(k => {
+    const d = FORMULARY_DB[k];
+    if (d) formularySection += `• ${d.brandName} (${d.genericName}) — Tier ${d.tier}, PA: ${d.priorAuth?.required ? 'Yes' : 'No'}, Est. cost: ${d.estimatedCost?.withInsurance || d.estimatedCost?.withoutInsurance}\n`;
+  });
+
+  return `You are a clinical communication and formulary access assistant embedded in an EHR. You help physicians explain prescribing decisions to patients using clear, empathetic language grounded in real formulary and insurance data.
+
+Below is the patient's insurance formulary data that you retrieved from their plan. Use these SPECIFIC numbers, tier information, costs, and requirements in your response — do not invent or generalize. Reference the actual plan name, copay amounts, and approval rates.
+
+${formularySection}
+
+The clinician assessed "${medication}" and found these access barriers:
+${barriers}
+
+The recommended alternative is "${alternative}".
+
+Generate the following in a structured format. Ground every claim in the formulary data above:
+
+1. **SCRIPT**: A patient-ready conversation script (2-3 short paragraphs in the clinician's voice, using simple language, empathetic tone). Reference specific costs and timelines from the formulary data. Wrap in quotes.
+
+2. **KEY POINTS** (4-5 bullet points): The most important things to communicate, with specific numbers from the formulary.
+
+3. **AVOID SAYING** (2-3 items): Common pitfalls to avoid in this conversation.
+
+4. **NEXT STEPS** (2-3 items): Concrete actions with specific timelines.
+
+Format each section with the header on its own line followed by the content.`;
+}
+
+async function generateCommunicationScript(targetContainer, context) {
+  const endpoint = getAzureEndpoint();
+  const key = getAzureKey();
+
+  const medEntry = lookupFormulary((context.medication || 'semaglutide').split(' ')[0]);
+  const defaultBarriers = medEntry ?
+    `Formulary: ${medEntry.formularyStatus} (Tier ${medEntry.tier || 'N/A'}). PA: ${medEntry.priorAuth?.required ? 'Required (' + medEntry.priorAuth.turnaround + ', ' + medEntry.priorAuth.approvalRate + ' approval rate)' : 'Not required'}. Step therapy: ${medEntry.stepTherapy?.required ? 'Required' : 'Not required'}. Cost without insurance: ${medEntry.estimatedCost?.withoutInsurance || 'N/A'}.` :
+    'Prior authorization required, step therapy mandate, estimated 5-10 day PA turnaround, $1,200+/month without coverage';
+
+  const prompt = buildPrompt(
+    context.medication || 'Semaglutide (Wegovy)',
+    context.alternative || 'Phentermine (Generic)',
+    context.barriers || defaultBarriers,
+    context.patientContext || getPatientContext()
+  );
+
+  targetContainer.innerHTML =
+    '<div class="ai-generating"><div class="ai-dot-pulse"><span></span><span></span><span></span></div>Generating with AI…</div>' +
+    '<div class="quick-script" id="aiStreamedScript" style="min-height: 60px;"></div>';
+
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+
+    const resp = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'api-key': key },
+      body: JSON.stringify({
+        messages: [
+          { role: 'system', content: 'You are a clinical communication and formulary access assistant. Ground your responses in the specific formulary data provided — use exact costs, tier numbers, approval rates, and plan details. Be concise, empathetic, and practical. Never invent data that is not in the formulary context.' },
+          { role: 'user', content: prompt }
+        ],
+        max_tokens: 1000,
+        temperature: 0.7
+      }),
+      signal: controller.signal
+    });
+
+    clearTimeout(timeout);
+
+    if (!resp.ok) {
+      throw new Error('API returned ' + resp.status);
+    }
+
+    const data = await resp.json();
+    const content = data.choices?.[0]?.message?.content || '';
+
+    if (!content) {
+      throw new Error('Empty response');
+    }
+
+    targetContainer.querySelector('.ai-generating').remove();
+    const scriptEl = targetContainer.querySelector('#aiStreamedScript') || document.createElement('div');
+    scriptEl.id = 'aiStreamedScript';
+    scriptEl.className = 'quick-script';
+
+    await typeText(scriptEl, content);
+
+    const badge = document.createElement('div');
+    badge.className = 'ai-badge';
+    badge.style.marginTop = '10px';
+    badge.innerHTML = '✦ AI-generated';
+    targetContainer.appendChild(badge);
+
+    aiScriptGenerated = true;
+
+  } catch(e) {
+    console.warn('Azure AI call failed:', e);
+    const reason = e.name === 'AbortError' ? 'Timeout' : e.message;
+    showFallbackContent(targetContainer, '(AI unavailable: ' + reason + ' — showing cached content)');
+  }
+}
+
+async function typeText(el, text) {
+  el.innerHTML = '';
+  const cursor = document.createElement('span');
+  cursor.className = 'ai-typing-cursor';
+
+  const formatted = formatAIResponse(text);
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = formatted;
+
+  el.appendChild(cursor);
+
+  const allText = tempDiv.textContent;
+  let charIndex = 0;
+  const speed = 12;
+
+  return new Promise(resolve => {
+    function typeNext() {
+      if (charIndex >= allText.length) {
+        cursor.remove();
+        el.innerHTML = formatted;
+        resolve();
+        return;
+      }
+
+      const batchSize = Math.min(3, allText.length - charIndex);
+      const chunk = allText.substring(0, charIndex + batchSize);
+      el.innerHTML = chunk;
+      el.appendChild(cursor);
+      charIndex += batchSize;
+
+      setTimeout(typeNext, speed);
+    }
+    typeNext();
+  });
+}
+
+function formatAIResponse(text) {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/\n- /g, '<br>• ')
+    .replace(/\n\d+\.\s/g, '<br>• ')
+    .replace(/^/, '<p>').replace(/$/, '</p>');
+}
+
+function showFallbackContent(container, reason) {
+  const reasonLabel = reason ? '<div style="font-size: 11px; color: var(--slate-400); margin-bottom: 8px; font-style: italic;">' + reason + '</div>' : '';
+
+  container.innerHTML = reasonLabel +
+    '<div class="quick-script"><p>' + HARDCODED_SCRIPT.replace(/\n\n/g, '</p><p>') + '</p></div>' +
+    '<div class="quick-points">' +
+    HARDCODED_POINTS.map(p => '<div class="quick-point"><span class="quick-point-bullet"></span>' + p + '</div>').join('') +
+    '</div>';
+}
+
+/* ═══════════════════════════════════════
+   5. CORE DEMO FUNCTIONS (existing, enhanced)
+   ═══════════════════════════════════════ */
+
+function sched(fn, ms) {
+  const t = setTimeout(fn, ms);
+  timeouts.push(t);
+  return t;
+}
+
+function clearAllTimeouts() {
+  timeouts.forEach(t => clearTimeout(t));
+  timeouts = [];
+  demoConvReviewingTimeouts.forEach(t => clearTimeout(t));
+  demoConvReviewingTimeouts = [];
+  // Reset clinician typing queue so a restarted demo starts clean
+  clinicianTypingQueue = [];
+  isTypingClinician = false;
+}
+
+function showView(viewId) {
+  currentActiveView = viewId;
+  views.forEach(v => document.getElementById(v).classList.remove('active'));
+  document.getElementById(viewId).classList.add('active');
+  document.getElementById('panelBody').scrollTop = 0;
+  updateTicker();
+  updateDemoConversationEvaluating(viewId === 'viewDetection' || viewId === 'viewAssessment');
+}
+
+function updateTicker() {
+  const ticker = document.getElementById('transcriptTicker');
+  if (currentActiveView === 'viewListening') {
+    ticker.classList.remove('visible');
+  } else if (demoRunning) {
+    ticker.classList.add('visible');
+  }
+}
+
+function setTickerLine(html) {
+  const el = document.getElementById('tickerLine');
+  el.classList.remove('visible');
+  setTimeout(() => {
+    el.innerHTML = html;
+    el.classList.add('visible');
+  }, 100);
+}
+
+function setStatus(state) {
+  const dot = document.getElementById('statusDot');
+  const text = document.getElementById('statusText');
+  dot.className = 'status-dot';
+  switch(state) {
+    case 'listening':
+      dot.style.background = 'var(--green-500)';
+      text.textContent = 'Listening';
+      break;
+    case 'evaluating':
+      dot.style.background = 'var(--amber-500)';
+      text.textContent = 'Evaluating…';
+      break;
+    case 'ready':
+      dot.style.background = 'var(--blue-500)';
+      text.textContent = 'Assessment Ready';
+      break;
+    case 'idle':
+      dot.classList.add('idle');
+      dot.style.background = 'var(--slate-500)';
+      text.textContent = 'Visit Saved';
+      break;
+  }
+}
+
+function setLabel(text) {
+  document.getElementById('demoStepLabel').textContent = text;
+}
+
+function showTranscriptLine(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.add('visible');
+  const speakerEl = el.querySelector('.speaker');
+  const speaker = speakerEl ? speakerEl.textContent.trim() : 'Clinician';
+  const fullText = el.innerText || '';
+  const text = fullText.includes('\n') ? fullText.substring(fullText.indexOf('\n') + 1).trim() : fullText.replace(speaker, '').trim();
+  if (!document.querySelector('#demoConversationBody [data-line-id="' + id + '"]')) {
+    const bubble = document.createElement('div');
+    bubble.className = 'demo-conv-bubble ' + (speaker === 'Patient' ? 'patient' : 'clinician');
+    bubble.setAttribute('data-line-id', id);
+    const label = speaker === 'Patient' ? 'Sarah (Patient)' : 'Dr. Martinez (Clinician)';
+    bubble.innerHTML = '<div class="demo-conv-speaker">' + label + '</div><div class="demo-conv-text"></div>';
+    document.getElementById('demoConversationBody').appendChild(bubble);
+    const textEl = bubble.querySelector('.demo-conv-text');
+    if (speaker === 'Patient') {
+      textEl.innerHTML = highlightMedications(text);
+      const cb = document.getElementById('demoConversationBody');
+      if (cb) cb.scrollTop = cb.scrollHeight;
+    } else {
+      typeIntoDemoBubble(textEl, text, () => {
+        textEl.innerHTML = highlightMedications(textEl.textContent);
+        const cb2 = document.getElementById('demoConversationBody');
+        if (cb2) cb2.scrollTop = cb2.scrollHeight;
+      });
+    }
+  }
+  if (currentActiveView === 'viewListening') {
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  if (currentActiveView !== 'viewListening') {
+    setTickerLine(el.innerHTML);
+  }
+}
+
+function showBgLine(speaker, text) {
+  const html = '<span class="speaker">' + speaker + '</span><br>' +
+    text.replace(/tirzepatide/gi, '<span class="transcript-highlight">tirzepatide</span>');
+  setTickerLine(html);
+}
+
+function runEvalAnimation(onDone) {
+  const evalSteps = ['es1', 'es2', 'es3', 'es4', 'es5'];
+  const progressBar = document.getElementById('evalProgressBar');
+  const totalTime = 3000;
+  const stepInterval = totalTime / evalSteps.length;
+
+  const drug = FORMULARY_DB.semaglutide_wegovy;
+  const stepResults = [
+    `✓ ${drug.formularyStatus} — Tier ${drug.tier}`,
+    `✓ PA required (${drug.priorAuth.turnaround}, ${drug.priorAuth.approvalRate} approval)`,
+    `✓ Step therapy mandate — must trial preferred agent ≥ 90 days`,
+    `✓ Est. ${drug.estimatedCost.withoutInsurance} (40% coinsurance)`,
+    `✓ ${drug.alternatives.length} alternatives — Phentermine (Tier 1, no PA)`
+  ];
+
+  progressBar.style.transition = `width ${totalTime}ms linear`;
+  requestAnimationFrame(() => { progressBar.style.width = '100%'; });
+
+  evalSteps.forEach((id, i) => {
+    sched(() => {
+      const el = document.getElementById(id);
+      el.classList.add('done');
+      el.querySelector('.eval-step-icon').textContent = '✓';
+      const textNode = el.childNodes[el.childNodes.length - 1];
+      if (textNode) textNode.textContent = ' ' + stepResults[i];
+    }, stepInterval * (i + 1) - 100);
+  });
+
+  sched(() => {
+    document.getElementById('evalLabel').textContent = 'Assessment ready';
+    document.getElementById('evalSublabel').textContent = 'Semaglutide — Medium access risk identified';
+    document.querySelector('.spinner-ring').style.animation = 'none';
+    document.querySelector('.spinner-ring').style.borderColor = 'var(--green-500)';
+    document.querySelector('.spinner-ring').style.borderTopColor = 'var(--green-500)';
+    sched(() => { if (onDone) onDone(); }, 600);
+  }, totalTime);
+}
+
+const EVAL_STEP_LABELS = [
+  ' Checking formulary status…',
+  ' Checking prior auth requirements…',
+  ' Checking step therapy rules…',
+  ' Estimating patient cost exposure…',
+  ' Identifying alternatives…'
+];
+
+function resetEvalState() {
+  const progressBar = document.getElementById('evalProgressBar');
+  progressBar.style.transition = 'none';
+  progressBar.style.width = '0%';
+  document.getElementById('evalLabel').textContent = 'Evaluating access…';
+  document.getElementById('evalSublabel').textContent = `Querying ${PATIENT_PROFILE.plan.name} formulary via ${PATIENT_PROFILE.plan.pbm}`;
+  const ring = document.querySelector('.spinner-ring');
+  ring.style.animation = '';
+  ring.style.borderColor = '';
+  ring.style.borderTopColor = '';
+  ['es1','es2','es3','es4','es5'].forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.classList.remove('done');
+    el.querySelector('.eval-step-icon').textContent = '⏳';
+    const textNode = el.childNodes[el.childNodes.length - 1];
+    if (textNode) textNode.textContent = EVAL_STEP_LABELS[i];
+  });
+}
+
+/* ─── Mute toggle (live mode only) ─── */
+
+function toggleMute() {
+  liveMuted = !liveMuted;
+  const btn = document.getElementById('demoMute');
+  if (liveMuted) {
+    btn.innerHTML = '🔇 Muted';
+    btn.classList.add('muted');
+    // Clear any interim text immediately
+    updateLiveInterim('');
+  } else {
+    btn.innerHTML = '🎙 Mute';
+    btn.classList.remove('muted');
+  }
+}
+
+/* ─── Start Demo (mode-aware) ─── */
+
+function startDemo() {
+  if (demoRunning) return;
+  demoRunning = true;
+  paused = false;
+  acceptTriggered = false;
+  aiScriptGenerated = false;
+  liveMuted = false;
+
+  const btn = document.getElementById('demoStart');
+  btn.style.display = 'none';
+
+  showView('viewListening');
+  setStatus('listening');
+
+  if (demoMode === 'live') {
+    setLabel('🎙 Live mode — you speak, AI replies in text only');
+    document.getElementById('demoMute').style.display = 'flex';
+    startLiveTranscript();
+  } else {
+    document.getElementById('demoMute').style.display = 'none';
+    startScriptedDemo();
+  }
+}
+
+function startScriptedDemo() {
+  document.getElementById('demoFF').style.display = 'flex';
+  setLabel('Visit begins — conversation auto-playing…');
+  scheduleMainConversation(1);
+}
+
+function scheduleMainConversation(speed) {
+  TRANSCRIPT.forEach(line => {
+    sched(() => {
+      if (paused) return;
+      showTranscriptLine(line.id);
+    }, line.time / speed);
+  });
+
+  sched(() => {
+    if (paused) return;
+    setLabel('Semaglutide detected — auto-evaluating access…');
+    setStatus('evaluating');
+    showView('viewDetection');
+    document.getElementById('transcriptTicker').classList.add('visible');
+    runEvalAnimation(() => {
+      setLabel('Assessment ready — explore the tool freely');
+      setStatus('ready');
+      showView('viewAssessment');
+    });
+  }, 13500 / speed);
+
+  sched(() => {
+    if (paused) return;
+    showTranscriptLine('t5');
+  }, 19000 / speed);
+
+  sched(() => {
+    if (paused) return;
+    showTranscriptLine('t6');
+    sched(() => {
+      document.getElementById('secondMedNotify').classList.add('show');
+      showToast('💊', 'New medication detected: Tirzepatide');
+      setLabel('Patient mentioned tirzepatide — new med detected');
+    }, 500 / speed);
+  }, 23000 / speed);
+
+  sched(() => {
+    if (paused) return;
+    showTranscriptLine('t7');
+  }, 28000 / speed);
+
+  BG_CONVERSATION.forEach(line => {
+    sched(() => {
+      if (paused) return;
+      showBgLine(line.speaker, line.text);
+    }, line.time / speed);
+  });
+}
+
+function fastForward() {
+  clearAllTimeouts();
+
+  for (let i = 1; i <= 7; i++) {
+    showTranscriptLine('t' + i);
+  }
+
+  setStatus('ready');
+  showView('viewAssessment');
+  document.getElementById('transcriptTicker').classList.add('visible');
+  document.getElementById('secondMedNotify').classList.add('show');
+  setLabel('⏩ Fast-forwarded — assessment ready, explore freely');
+
+  BG_CONVERSATION.forEach((line, i) => {
+    sched(() => {
+      if (paused) return;
+      showBgLine(line.speaker, line.text);
+    }, 4000 * i);
+  });
+}
+
+function togglePause() {
+  paused = !paused;
+  const btn = document.getElementById('tickerPauseBtn');
+  const pulse = document.getElementById('tickerPulse');
+  if (paused) {
+    btn.textContent = 'Resume';
+    pulse.style.animationPlayState = 'paused';
+    pulse.style.background = 'var(--slate-500)';
+  } else {
+    btn.textContent = 'Pause';
+    pulse.style.animationPlayState = '';
+    pulse.style.background = '';
+  }
+}
+
+function handleAction(action) {
+  if (action === 'accept' && !acceptTriggered) {
+    acceptTriggered = true;
+    showToast('✓', 'Recommendation accepted — clinician explaining to patient…');
+    setLabel('Clinician explains the plan to the patient…');
+
+    ACCEPT_TRANSCRIPT.forEach(line => {
+      sched(() => {
+        showTranscriptLine(line.id);
+      }, line.delay);
+    });
+
+    sched(() => {
+      setLabel('Patient agrees — visit wrapping up');
+      showView('viewSaved');
+      setStatus('idle');
+      showToast('✓', 'Visit complete — recommendation and explanation saved');
+      const startBtn = document.getElementById('demoStart');
+      startBtn.style.display = 'flex';
+      startBtn.innerHTML = '✓ Demo Complete';
+      startBtn.style.background = 'var(--green-600)';
+      startBtn.onclick = resetDemo;
+    }, 18000);
+
+  } else if (action === 'accept' && acceptTriggered) {
+    showView('viewSaved');
+    setStatus('idle');
+    showToast('✓', 'Recommendation accepted and saved');
+  } else if (action === 'save') {
+    showView('viewSaved');
+    setStatus('idle');
+    const s = document.getElementById('savedCardAccepted').querySelector('.saved-card-status');
+    s.textContent = '⏳ Saved for Later';
+    s.className = 'saved-card-status saved';
+    showToast('⏳', 'Recommendation saved for later');
+  } else if (action === 'dismiss') {
+    showToast('✕', 'Recommendation dismissed');
+  }
+}
+
+let commTabAiGenerated = false;
+
+function switchTab(el) {
+  const tabId = el.getAttribute('data-tab');
+  document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab' + tabId.charAt(0).toUpperCase() + tabId.slice(1)).classList.add('active');
+
+  if (tabId === 'communication' && demoMode === 'live' && !commTabAiGenerated) {
+    commTabAiGenerated = true;
+    const container = document.getElementById('commTabContent');
+    if (container) {
+      generateCommunicationScript(container, {
+        medication: 'Semaglutide (Wegovy)',
+        alternative: 'Phentermine (Generic)',
+        barriers: 'Prior authorization required (5-10 day turnaround), step therapy mandate, $1,200+/month without coverage',
+        patientContext: 'Sarah Chen, 38F, BMI 34.2, pre-diabetic. Aetna PPO. Tried diet/exercise 6+ months. Motivated but discouraged.'
+      });
+    }
+  }
+}
+
+function switchTabById(tabId) {
+  const tabEl = document.querySelector(`.detail-tab[data-tab="${tabId}"]`);
+  if (tabEl) switchTab(tabEl);
+}
+
+function goToAssessment() { showView('viewAssessment'); setStatus('ready'); }
+function goToDetail() { showView('viewDetail'); switchTabById('drivers'); }
+function goBackToAssessment() { showView('viewAssessment'); }
+function goToListening() { showView('viewListening'); }
+
+function showTirzepatideAssessment() {
+  showView('viewTirzepatide');
+  setLabel('Viewing tirzepatide assessment — Low access');
+}
+
+function showToast(icon, message) {
+  const toast = document.getElementById('toast');
+  document.querySelector('.toast-icon').textContent = icon;
+  document.getElementById('toastText').textContent = message;
+  toast.classList.add('visible');
+  setTimeout(() => toast.classList.remove('visible'), 3000);
+}
+
+/* ─── Quick Expand — with optional AI generation ─── */
+
+function toggleQuickExpand(btn) {
+  const isOpening = !btn.classList.contains('open');
+  btn.classList.toggle('open');
+  btn.nextElementSibling.classList.toggle('open');
+
+  if (isOpening && demoMode === 'live' && !aiScriptGenerated) {
+    const container = document.getElementById('aiScriptContainer');
+    if (container) {
+      generateCommunicationScript(container, {
+        medication: 'Semaglutide (Wegovy)',
+        alternative: 'Phentermine (Generic)',
+        barriers: 'Prior authorization required (5-10 day turnaround), step therapy mandate (must try alternative first), estimated $1,200+/month without coverage',
+        patientContext: 'Sarah Chen, 38F, BMI 34.2, pre-diabetic. Tried diet/exercise for 6+ months without results. Insured via Aetna PPO. Motivated but discouraged.'
+      });
+    }
+  }
+}
+
+function copyScript() {
+  const scriptEl = document.querySelector('#aiStreamedScript') ||
+                   document.querySelector('.quick-script') ||
+                   document.querySelector('.comm-script');
+  if (!scriptEl) return;
+  navigator.clipboard.writeText(scriptEl.innerText).then(() => {
+    showToast('📋', 'Script copied to clipboard');
+  }).catch(() => {
+    showToast('📋', 'Script copied');
+  });
+}
+
+/* ─── Reset ─── */
+
+function resetDemo() {
+  clearAllTimeouts();
+  stopLiveTranscript(true);
+  demoRunning = false;
+  paused = false;
+  acceptTriggered = false;
+  aiScriptGenerated = false;
+  commTabAiGenerated = false;
+  liveMedDetected = { semaglutide: false, tirzepatide: false };
+
+  showView('viewListening');
+  setStatus('listening');
+
+  document.querySelectorAll('.transcript-line').forEach(l => l.classList.remove('visible'));
+  document.getElementById('transcriptTicker').classList.remove('visible');
+  document.getElementById('tickerLine').classList.remove('visible');
+  document.getElementById('tickerLine').innerHTML = '';
+  document.getElementById('secondMedNotify').classList.remove('show');
+
+  const liveContainer = document.getElementById('liveTranscriptLines');
+  liveContainer.innerHTML = '';
+  liveContainer.style.display = 'none';
+  document.getElementById('transcriptLines').style.display = '';
+
+  const demoConv = document.getElementById('demoConversationBody');
+  if (demoConv) demoConv.innerHTML = '';
+  updateDemoConversationEvaluating(false);
+
+  document.getElementById('micLiveIndicator').classList.remove('active');
+  document.getElementById('listeningLabel').textContent = 'Listening to visit…';
+  document.getElementById('listeningSublabel').textContent = 'The Assistant will surface an access assessment when a medication is discussed.';
+  liveMuted = false;
+  const muteBtn = document.getElementById('demoMute');
+  muteBtn.innerHTML = '🎙 Mute';
+  muteBtn.classList.remove('muted');
+  muteBtn.style.display = 'none';
+
+  const startBtn = document.getElementById('demoStart');
+  startBtn.style.display = 'flex';
+  startBtn.style.background = '';
+  startBtn.onclick = startDemo;
+
+  if (demoMode === 'live') {
+    startBtn.innerHTML = '🎙 Start Live';
+    document.getElementById('demoFF').style.display = 'none';
+    setLabel('Click Start Live — you speak, AI replies in text only');
+  } else {
+    startBtn.innerHTML = '▶ Start Demo';
+    document.getElementById('demoFF').style.display = 'none';
+    setLabel('Click Start to begin — conversation auto-plays');
+  }
+
+  document.getElementById('tickerPauseBtn').textContent = 'Pause';
+  document.getElementById('tickerPulse').style.animationPlayState = '';
+  document.getElementById('tickerPulse').style.background = '';
+
+  const savedStatus = document.getElementById('savedCardAccepted').querySelector('.saved-card-status');
+  savedStatus.textContent = '✓ Accepted';
+  savedStatus.className = 'saved-card-status accepted';
+
+  resetEvalState();
+  switchTabById('drivers');
+
+  document.querySelectorAll('.quick-expand-toggle').forEach(t => t.classList.remove('open'));
+  document.querySelectorAll('.quick-expand-content').forEach(c => c.classList.remove('open'));
+
+  showFallbackContent(document.getElementById('aiScriptContainer'), '');
+}
+
+if (window.speechSynthesis) speechSynthesis.getVoices();
+resetDemo();
+</script>
+
+
+
+</body></html>
